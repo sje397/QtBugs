@@ -1,0 +1,841 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>686</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="contextMenuPolicy" >
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
+  <property name="windowTitle" >
+   <string>QtBugs</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QHBoxLayout" >
+    <item>
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="PetriWidget" native="1" name="worldView" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tabWidget" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize" >
+         <size>
+          <width>410</width>
+          <height>180</height>
+         </size>
+        </property>
+        <property name="currentIndex" >
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tabStats" >
+         <attribute name="title" >
+          <string>Stats</string>
+         </attribute>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QWidget" native="1" name="widget" >
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <property name="margin" >
+              <number>9</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label" >
+                 <property name="text" >
+                  <string>Total world energy:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="totalEnergy" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_2" >
+                 <property name="text" >
+                  <string>Total bug energy:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="bugEnergy" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_3" >
+                 <property name="text" >
+                  <string>Total energy energy:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="energyEnergy" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_4" >
+                 <property name="text" >
+                  <string>Undistributed energy:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="remainingEnergy" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QWidget" native="1" name="widget_2" >
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <property name="margin" >
+              <number>9</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_5" >
+                 <property name="text" >
+                  <string>Time:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="time" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_13" >
+                 <property name="text" >
+                  <string>Updates per second:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="updatesPerSec" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_6" >
+                 <property name="text" >
+                  <string>Population:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="population" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_7" >
+                 <property name="text" >
+                  <string>Generation:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="generation" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                 <property name="readOnly" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tabView" >
+         <attribute name="title" >
+          <string>View</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout" >
+          <item>
+           <widget class="QGroupBox" name="groupBox" >
+            <property name="title" >
+             <string>Mode</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout" >
+             <item row="0" column="0" >
+              <widget class="QRadioButton" name="radViewDefault" >
+               <property name="text" >
+                <string>Default</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QRadioButton" name="radViewBugs" >
+               <property name="text" >
+                <string>Bugs only</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QRadioButton" name="radViewEnergy" >
+               <property name="text" >
+                <string>Bug energy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QRadioButton" name="radViewAge" >
+               <property name="text" >
+                <string>Age</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QRadioButton" name="radViewSize" >
+               <property name="text" >
+                <string>DNA Size</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <layout class="QHBoxLayout" name="horizontalLayout_2" >
+               <item>
+                <widget class="QRadioButton" name="radViewDNA" >
+                 <property name="text" >
+                  <string>DNA</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnHist" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                 <property name="text" >
+                  <string>Histogram</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QSpinBox" name="spinDNAVal" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="maximum" >
+                <number>2048</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" native="1" name="widget_3" >
+        <property name="minimumSize" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="runButton" >
+           <property name="minimumSize" >
+            <size>
+             <width>0</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string>Stop</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="stepBtn" >
+           <property name="text" >
+            <string>Step</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Settings" native="1" name="settings" >
+      <property name="minimumSize" >
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>250</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>686</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="actionNew" />
+    <addaction name="actionOpen" />
+    <addaction name="actionSave" />
+    <addaction name="actionSave_As" />
+    <addaction name="actionAutoSave" />
+    <addaction name="separator" />
+    <addaction name="actionCheck_Integrity" />
+   </widget>
+   <addaction name="menuFile" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionSave_As" >
+   <property name="text" >
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="text" >
+    <string>New...</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionChange" >
+   <property name="text" >
+    <string>Change...</string>
+   </property>
+  </action>
+  <action name="actionAutoSave" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>AutoSave</string>
+   </property>
+  </action>
+  <action name="actionCheck_Integrity" >
+   <property name="text" >
+    <string>Check Integrity</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PetriWidget</class>
+   <extends>QWidget</extends>
+   <header>petriwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Settings</class>
+   <extends>QWidget</extends>
+   <header>settings.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radViewDNA</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinDNAVal</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>303</x>
+     <y>468</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>351</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radViewDNA</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnHist</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>283</x>
+     <y>455</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>326</x>
+     <y>460</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

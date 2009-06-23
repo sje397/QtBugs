@@ -1,0 +1,377 @@
+<ui version="4.0" >
+ <class>ProcessorPageClass</class>
+ <widget class="QWidget" name="ProcessorPageClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>697</width>
+    <height>674</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>ProcessorPage</string>
+  </property>
+  <widget class="QWidget" name="verticalLayout" >
+   <property name="geometry" >
+    <rect>
+     <x>50</x>
+     <y>100</y>
+     <width>241</width>
+     <height>531</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Disassemble from:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>disStartEd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="disStartEd" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="disIPChk" >
+        <property name="text" >
+         <string>IP</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="disEd" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayout_2" >
+   <property name="geometry" >
+    <rect>
+     <x>320</x>
+     <y>30</y>
+     <width>160</width>
+     <height>231</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_2" >
+      <property name="text" >
+       <string>Inputs:</string>
+      </property>
+      <property name="buddy" >
+       <cstring>inList</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="inList" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayout_3" >
+   <property name="geometry" >
+    <rect>
+     <x>320</x>
+     <y>280</y>
+     <width>160</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_3" >
+      <property name="text" >
+       <string>Outputs:</string>
+      </property>
+      <property name="buddy" >
+       <cstring>outList</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="outList" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayout" >
+   <property name="geometry" >
+    <rect>
+     <x>50</x>
+     <y>60</y>
+     <width>241</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_4" >
+      <property name="minimumSize" >
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text" >
+       <string>IP:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="buddy" >
+       <cstring>ipEd</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="ipEd" >
+      <property name="alignment" >
+       <set>Qt::AlignRight</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="stepBtn" >
+      <property name="focusPolicy" >
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="text" >
+       <string>Step</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayout_2" >
+   <property name="geometry" >
+    <rect>
+     <x>50</x>
+     <y>30</y>
+     <width>241</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_5" >
+      <property name="minimumSize" >
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text" >
+       <string>Acc:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="buddy" >
+       <cstring>accEd</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="accEd" >
+      <property name="alignment" >
+       <set>Qt::AlignRight</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayout_4" >
+   <property name="geometry" >
+    <rect>
+     <x>320</x>
+     <y>430</y>
+     <width>160</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_8" >
+      <property name="text" >
+       <string>Stack:</string>
+      </property>
+      <property name="buddy" >
+       <cstring>stackList</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="stackList" />
+    </item>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_6" >
+        <property name="minimumSize" >
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>SP:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>spEd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="spEd" >
+        <property name="alignment" >
+         <set>Qt::AlignRight</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_7" >
+        <property name="minimumSize" >
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>BP:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>bpEd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="bpEd" >
+        <property name="alignment" >
+         <set>Qt::AlignRight</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <tabstops>
+  <tabstop>disStartEd</tabstop>
+  <tabstop>ipEd</tabstop>
+  <tabstop>stepBtn</tabstop>
+  <tabstop>accEd</tabstop>
+  <tabstop>bpEd</tabstop>
+  <tabstop>spEd</tabstop>
+  <tabstop>stackList</tabstop>
+  <tabstop>inList</tabstop>
+  <tabstop>outList</tabstop>
+  <tabstop>disEd</tabstop>
+  <tabstop>disIPChk</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>disIPChk</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>disStartEd</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>288</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>248</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
