@@ -51,3 +51,6 @@ win32 {
     QMAKE_LFLAGS += -mno-cygwin
 }
 OTHER_FILES += 
+CONFIG(release, debug|release):DESTDIR = release
+CONFIG(debug, debug|release):DESTDIR = debug
+
