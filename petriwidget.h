@@ -3,8 +3,10 @@
 
 #include <QWidget>
 #include <QColor>
-#include <QPixmap>
+#include <QImage>
 #include <QMutex>
+#include <QTime>
+#include <QPainter>
 
 class PetriWidget: public QWidget {
 	Q_OBJECT
@@ -13,11 +15,16 @@ public:
 	void set_image_size(int x, int y);	
 	void update_pixel(int x, int y, unsigned char col);
 
+public slots:
+        void queueUpdate();
+
 signals:
 	void clicked(int x, int y);
 
 protected:
-	QPixmap image;
+        QImage image;
+        QTime paintTime;
+        QPainter painter;
 
 	void paintEvent(QPaintEvent *event);
 	void mousePressEvent(QMouseEvent * event);

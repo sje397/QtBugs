@@ -4,7 +4,7 @@
 #include <QTimer>
 
 PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
-	//setAttribute(Qt::WA_OpaquePaintEvent, true);
+        setAttribute(Qt::WA_OpaquePaintEvent, true);
 
 	float f;
 	char r, g;
@@ -30,30 +30,41 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 	timer->start();
 	*/
+
+        paintTime.start();
+}
+
+void PetriWidget::queueUpdate() {
+    if(paintTime.elapsed() > 100) {
+        update();
+        paintTime.restart();
+    }
 }
 
 void PetriWidget::set_image_size(int x, int y) {
-	QMutexLocker locker(&imageMutex);
-	image = QPixmap(x, y);
+        //QMutexLocker locker(&imageMutex);
+        image = QImage(x, y, QImage::Format_RGB32);
 	//image.fill(Qt::black);
-	if(imagePainter) delete imagePainter;
-	imagePainter = new QPainter(&image);
+        //if(imagePainter) delete imagePainter;
+        //imagePainter = new QPainter(&image);
 }
 
 void PetriWidget::update_pixel(int x, int y, unsigned char col) {
-	QMutexLocker locker(&imageMutex);
-	imagePainter->setPen(colorTable[col]);
-	imagePainter->drawPoint(x, y);
+        //QMutexLocker locker(&imageMutex);
+        //imagePainter->setPen(colorTable[col]);
+        //imagePainter->drawPoint(x, y);
+        image.setPixel(x, y, colorTable[col].rgb());
 }
 
 
 void PetriWidget::paintEvent(QPaintEvent *event) {
 	if(isVisible()) {
-		QMutexLocker locker(&imageMutex);
+                //QMutexLocker locker(&imageMutex);
 		QPainter painter(this);	
-		//painter.setRenderHint(QPainter::Antialiasing, false);
-		//painter.setRenderHint(QPainter::SmoothPixmapTransform,false);
-		painter.drawPixmap(rect(), image, image.rect());
+                painter.setRenderHint(QPainter::Antialiasing, false);
+                painter.setRenderHint(QPainter::SmoothPixmapTransform,false);
+                painter.drawImage(rect(), image, image.rect(), Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
+                //painter.drawImage(0, 0, image, 0, 0, -1, -1, Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
 	}
 }
 

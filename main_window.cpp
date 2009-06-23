@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	setupUi(this);
 	
 	connect(&timer, SIGNAL(timeout()), &petri_dish, SLOT(step()));
-	connect(&petri_dish, SIGNAL(changed()), worldView, SLOT(update()));
+        connect(&petri_dish, SIGNAL(changed()), worldView, SLOT(queueUpdate()));
 	//connect(&petri_dish, SIGNAL(changed()), worldView, SLOT(repaint()));
 	connect(&petri_dish, SIGNAL(changed()), this, SLOT(set_stats()));
 	connect(runButton, SIGNAL(clicked()), this, SLOT(start_stop()));

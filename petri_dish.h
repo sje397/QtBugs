@@ -71,6 +71,7 @@ public slots:
 
 	
 	void check_integrity();
+
 signals:
 	void changed();
 	void histData(const QMap<int, int> &data, int pop);
