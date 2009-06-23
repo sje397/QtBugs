@@ -20,6 +20,8 @@ InstallDir "$PROGRAMFILES\Bugs"
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM "Software\Bugs" "Install_Dir"
 
+!define QTDIR	$%QTDIR%
+
 ;--------------------------------
 
 ; Pages
@@ -34,18 +36,6 @@ UninstPage instfiles
 ;--------------------------------
 
 ; The stuff to install
-Section "Microsoft Visual C Runtime"
-
-  SetOutPath "$INSTDIR"
-
-  File "vcredist_x86.exe"
-
-  nsExec::ExecToStack 'vcredist_x86.exe'
-  
-  Delete "$INSTDIR\vcredist_x86.exe"
-  
-SectionEnd
-
 Section "Bugs (required)"
   SectionIn RO
   
@@ -53,13 +43,10 @@ Section "Bugs (required)"
   SetOutPath $INSTDIR  
   ; Put files there
   File "..\release\bugs.exe"
-  File "C:\Qt\4.3.2\bin\QtCore4.dll"
-  File "C:\Qt\4.3.2\bin\QtGui4.dll"
-  ;File "C:\Qt\4.3.2\bin\QtNetwork4.dll"
-  ;File "C:\Qt\4.3.2\bin\QtOpenGL4.dll"
-  ;File "C:\Qt\4.3.2\bin\QtScript4.dll"
-  ;File "C:\Qt\4.3.2\bin\QtSql4.dll"
-  ;File "C:\Qt\4.3.2\bin\QtXml4.dll"
+  File "${QTDIR}\bin\QtCore4.dll"
+  File "${QTDIR}\bin\QtGui4.dll"
+  ; mingw runtime
+  File "${QTDIR}\bin\mingwm10.dll"
 	
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BUGS "Install_Dir" "$INSTDIR"
