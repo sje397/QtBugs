@@ -27,7 +27,7 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	for(int i = 0; i < data->size(); i++) {
 		// crosover half-way through dna
 		if(i % (data->size()/2) == 0)
-			combo = (combo + 2) % 2;
+			combo = (combo + 1) % 2;
 		if(i < mumData.size() && i < dadData.size()) {
 			switch(combo) {
 				case 0:

@@ -54,7 +54,6 @@ win32 {
 OTHER_FILES += 
 CONFIG(release, debug|release) {
     DESTDIR = release
-    CXXFLAGS += -O2
 }
 CONFIG(debug, debug|release):DESTDIR = debug
 
