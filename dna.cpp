@@ -19,12 +19,13 @@ DNA::DNA(QByteArray &d, float mut): data(&d), mutation(mut) {
 void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	const QByteArray &mumData = mum.getData();
 	const QByteArray &dadData = dad.getData();
-	//int coin = qrand() % 2;
-	//data->resize(coin ? mumData.size() : dadData.size());
-	data->resize(qMax(mumData.size(),dadData.size()));
+	int coin = qrand() % 2, s;
+	data->resize(s = (coin ? mumData.size() : dadData.size()));
+	//int s;
+	//data->resize(s = qMax(mumData.size(),dadData.size()));
 
 	unsigned int combo = qrand() % 2;
-	for(int i = 0; i < data->size(); i++) {
+	for(int i = 0; i < s && i < max_size; i++) {
 		// crosover half-way through dna
 		if(i % (data->size()/2) == 0)
 			combo = (combo + 1) % 2;
@@ -40,11 +41,19 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 		}
 		else if(i < mumData.size())
 			(*data)[i] = mumData[i];
-		else if(i < dadData.size())
+		else //if(i < dadData.size())
 			(*data)[i] = dadData[i];
 	}
 
-	
+	mutate(max_size, min_size);
+}
+
+void DNA::set_from(const DNA &parent, int max_size, int min_size) {
+	*data = parent.getData();
+	mutate(max_size, min_size);
+}
+
+void DNA::mutate(int max_size, int min_size) {
 	// random mutation
 	if(qrand()/(float)RAND_MAX < mutation) {
 		// yep, we have a mutation - figure out the type according to the mutation table
@@ -85,7 +94,7 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 }
 
 void DNA::add_chunk(int max_size) {
-	if(data->size() == max_size) return;
+	if(data->size() >= max_size) return;
 
 	int len = qrand() % qMin(max_size - data->size(), data->size()),
 		pos = qrand() % (data->size() - len);

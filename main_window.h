@@ -34,7 +34,7 @@ public slots:
 protected:
 	class UpdateThread: public QThread {
 	public:
-		UpdateThread(MainWindow *mw, QObject *parent = 0): QThread(parent), win(mw), done(false) {}
+		UpdateThread(MainWindow *mw, QObject *parent = 0): QThread(parent), done(false), win(mw) {}
 		~UpdateThread() {
 			finish();
 			wait();
@@ -64,6 +64,7 @@ protected:
 	bool write_to_stream(QDataStream &out);
 
 	PetriDish petri_dish;
+	int last_time;
 	QTimer timer;
 	QTime update_time;
 	float updates_per_sec;

@@ -1,7 +1,7 @@
 #include "bugeditdialog.h"
 
 BugEditDialog::BugEditDialog(Bug *b, QWidget *parent, Qt::WFlags flags)
-	: QDialog(parent), bug(b)
+	: QDialog(parent, flags), bug(b)
 {
 	ui.setupUi(this);
 

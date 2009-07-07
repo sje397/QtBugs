@@ -41,9 +41,9 @@ public:
 	void cleanup();
 	virtual ~PetriDish();
 	
-	float get_total_energy() const {QMutexLocker l(&dataMutex); return world_params.total_energy;}
-	float get_bug_energy() const {QMutexLocker l(&dataMutex); return bugEnergy;}
-	float get_energy_energy() const {QMutexLocker l(&dataMutex); return energyEnergy;}
+	int get_total_energy() const {QMutexLocker l(&dataMutex); return world_params.total_energy;}
+	int get_bug_energy() const {QMutexLocker l(&dataMutex); return bugEnergy;}
+	int get_energy_energy() const {QMutexLocker l(&dataMutex); return energyEnergy;}
 
 	unsigned long get_time() const {QMutexLocker l(&dataMutex); return time;}
 	unsigned long get_max_gen() const {QMutexLocker l(&dataMutex); return max_gen;}
@@ -69,27 +69,25 @@ public slots:
 	void set_dna_size_view_mode();
 	void set_dna_view_mode();
 
-	
+	void step();
+
 	void check_integrity();
 
 signals:
 	void changed();
 	void histData(const QMap<int, int> &data, int pop);
 	
-public slots:
-	void step();
-	
 protected:
 	mutable QMutex dataMutex;
 
 	WorldParams world_params;
-	float energyEnergy, bugEnergy;
-	quint64 time, max_gen, max_age, population, population_e, born, created, died, created_e, died_e;
+	int energyEnergy, bugEnergy;
+	quint64 time, max_gen, max_age, population;
 	
 	QList<Bug *> *bugList; // a buglist per location
 	QList<int> listHash; // a list of hashes for locations that have a non-zero pop
-	float *energy;	// an energy value per location
-	float *bugTotal; // total bug energy for each location
+	int *energy;	// an energy value per location
+	int *bugTotal; // total bug energy for each location
 	
 	int width, height;
 	PetriWidget *petriWidget;
@@ -101,14 +99,17 @@ protected:
 	unsigned char get_view_color_at(int x, int y);
 	
 	void get_vision_at(int x, int y, unsigned char vis[9]);
-	
+
 	void balance();
 	
 	ViewMode viewMode;
 	int showByte;
 	QMap<int, int> histogram;
 
-	void removeBug(Bug *b, double e, int x, int y);
+	void removeBug(Bug *b, int e, int x, int y);
+
+public: //only so we can call it from a static function using QtConcurrent::blockingMap
+	void do_eating_and_seeing(int hash);
 };
 
 QDataStream& operator<<(QDataStream& stream, const PetriDish &dish);

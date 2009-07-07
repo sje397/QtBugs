@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QTimer>
+#include <cmath>
 
 PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
         setAttribute(Qt::WA_OpaquePaintEvent, true);
@@ -31,7 +32,7 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 	timer->start();
 	*/
 
-        paintTime.start();
+	paintTime.start();
 }
 
 void PetriWidget::queueUpdate() {

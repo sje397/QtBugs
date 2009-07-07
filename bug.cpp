@@ -5,7 +5,7 @@
 QDataStream& operator<<(QDataStream& stream, Bug &bug) {
 	stream << bug.age << bug.children << bug.generation;
 	stream << bug.energy;
-	stream << bug.dir << bug.color;
+	stream << bug.dir << bug.color << bug.split;
 	stream << bug.data;
 	stream << bug.get_dna().get_mutation();
 	stream << bug.processor;
@@ -17,7 +17,7 @@ Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor() {
 	
 	in >> age >> children >> generation;
 	in >> energy;
-	in >> dir >> color;
+	in >> dir >> color >> split;
 	in >> data;
 	in >> mutation;
 	in >> processor;
@@ -25,7 +25,7 @@ Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor() {
 	dna.set_mutation(mutation);
 }
 
-Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), age(0), children(0), generation(0) {
+Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0), generation(0) {
 	data.resize(data_size);
 	for(int i = 0; i < data_size; i++) {
 		data[i] = qrand() % 256;
@@ -47,7 +47,7 @@ Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): Energ
 	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
 }
 
-Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), age(0), children(0) {
+Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0) {
 	mum = mummy;
 	dad = daddy;
 	dna.blend(mum->get_dna(), dad->get_dna(), max_size, min_size);
@@ -63,6 +63,23 @@ Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int step
 
 	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0
 	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
+	split = processor.get_out(2);
+}
+
+Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(false), age(0), children(0) {
+	dna.set_from(parent->get_dna(), max_size, min_size);
+
+	setX(parent->x());
+	setY(parent->y());
+	parent->add_child();
+
+	generation = parent->get_generation() + 1;
+
+	processor.set_data(data);
+
+	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0
+	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
+	split = processor.get_out(2);
 }
 
 Bug::~Bug() {
@@ -89,10 +106,10 @@ void Bug::update() {
 	
 	//qDebug() << "getting outputs";
 	// read and apply direction
-	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0
-		
+	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0		
 	// read and apply new colour
 	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
+	split = processor.get_out(2);
 	age++;
 	
 	updated = true;

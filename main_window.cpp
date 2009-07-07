@@ -42,7 +42,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
 	spinDNAVal->setMaximum(settings->getParams().max_data);
 	set_stats();
-	
+
+	last_time = 0;
 	update_time.start();
 	updates_per_sec = 0;
 
@@ -64,22 +65,24 @@ void MainWindow::updt() {
 }
 
 void MainWindow::set_stats() {
-	if(petri_dish.get_time() % 100) return;
-	if(update_time.elapsed() == 0) return;
+	//if(petri_dish.get_time() % 100) return;
+	if(update_time.elapsed() < 500) return;
 
-	float rate = 100.0f / update_time.elapsed() * 1000;
+	int t = petri_dish.get_time();
+	float rate = (t - last_time) / (float)update_time.elapsed() * 1000;
+	last_time = t;
 	update_time.restart();
 	updates_per_sec = 4 * updates_per_sec / 5 + rate / 5;
 	QString updates = QString().setNum(updates_per_sec, 'f', 2);
 	updatesPerSec->setText(updates);
 	
-	float totalEnergy = petri_dish.get_total_energy();
-	bugEnergy->setText(QString().setNum(petri_dish.get_bug_energy(), 'f', 1));
-	energyEnergy->setText(QString().setNum(petri_dish.get_energy_energy(), 'f', 1));
+	int totalEnergy = petri_dish.get_total_energy();
+	bugEnergy->setText(QString().setNum(petri_dish.get_bug_energy()));
+	energyEnergy->setText(QString().setNum(petri_dish.get_energy_energy()));
 	
-	float remaining = totalEnergy - petri_dish.get_bug_energy() - petri_dish.get_energy_energy();
+	int remaining = totalEnergy - petri_dish.get_bug_energy() - petri_dish.get_energy_energy();
 	if(remaining < 0) remaining = 0;
-	remainingEnergy->setText(QString().setNum(remaining, 'f', 1));
+	remainingEnergy->setText(QString().setNum(remaining));
 
 	time->setText(QString().setNum(petri_dish.get_time()));
 	QString pop = QString().setNum(petri_dish.get_population()),
@@ -124,8 +127,8 @@ void MainWindow::step() {
 }
 
 void MainWindow::check_integrity() {
-	if(isRunning()) 
-		start_stop();
+	//if(isRunning())
+	//	start_stop();
 	petri_dish.check_integrity();
 }
 
@@ -152,6 +155,7 @@ void MainWindow::new_world() {
 	set_stats();
 	changed = false;
 
+	last_time = 0;
 	update_time.restart();	
 	if(was_running) {
 		start_stop();
@@ -184,24 +188,32 @@ void MainWindow::load_world() {
 	QDataStream in(&file);   // we will serialize the data into the file	
 	in.setVersion(QDataStream::Qt_4_2);
 
-	actionAutoSave->setEnabled(true);
-	in >> auto_save;
+	int ver;
+	in >> ver;
+	if(ver == 2) {
+		actionAutoSave->setEnabled(true);
+		in >> auto_save;
 
-	WorldParams params;
-	in >> params;
-	petri_dish.cleanup();
-	settings->setParams(params);
-	petri_dish.init(params);
-	totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
-	spinDNAVal->setMaximum(params.max_data);
-	in >> petri_dish;
-	changed  = false;
-	
-	//if successfull
-	filename = fn;
+		WorldParams params;
+		in >> params;
+		petri_dish.cleanup();
+		settings->setParams(params);
+		petri_dish.init(params);
+		totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
+		spinDNAVal->setMaximum(params.max_data);
+		in >> petri_dish;
+		last_time = petri_dish.get_time();
+		update_time.restart();
+		changed  = false;
 
-	actionAutoSave->setChecked(auto_save);
-	autosave_world();
+		//if successfull
+		filename = fn;
+
+		actionAutoSave->setChecked(auto_save);
+		autosave_world();
+	} else {
+		QMessageBox::warning(this, "Load Failed", "Sorry, could not load that file.");
+	}
 
 	if(running) start_stop();
 	else update();
@@ -279,6 +291,7 @@ void MainWindow::change_world() {
 }
 
 bool MainWindow::write_to_stream(QDataStream &out) {
+	out << (int)2;
 	out << auto_save;
 	out << petri_dish.get_world_params();
 	out << petri_dish;

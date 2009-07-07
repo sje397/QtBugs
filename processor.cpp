@@ -33,6 +33,9 @@ void Processor::set_data(const QByteArray &rom) {
 }
 
 void Processor::update() {
+//	for(int i = 0; i < OUTPUTS; i++)
+//		out[i] = 0;
+//	out[2] = 0;
 	for(int i = 0; i < steps_per_update; i++) 
 		step();
 }
@@ -137,7 +140,7 @@ void Processor::step() {
 }
 
 #define MAX_DISASSEMBLE_LINES 200
-char *pneumonics[Processor::MAX_I] = {
+const char *pneumonics[Processor::MAX_I] = {
 	"NOOP", "PUSH", "POP", "PUSHA", "POPA", "CALL", "RET", "IN", "OUT", "JMP", "JMPZ", "JMPNZ", 
 	"LOAD", "STORE", "INC", "DEC", "NOT", "AND", "OR", "NAND", "NOR", "XOR", 
 	"ADD", "SUB", "MUL", "DIV", "RAND"
@@ -154,7 +157,6 @@ QString Processor::disassemble_from(int address) {
 
 	QString str = "<html><body><table>";
 
-	int b[4];
 	int ip_save = ip;
 	ip = address;
 	bool finished = false;

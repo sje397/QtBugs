@@ -5,13 +5,13 @@
 class EnergyNode: public QPoint {
 public:
 	EnergyNode():QPoint(0, 0), energy(0) {}
-	EnergyNode(float e, int x, int y);
+	EnergyNode(int e, int x, int y);
 	virtual ~EnergyNode() {}
 
-	float get_energy() const {return energy;}
-	void set_energy(float e) {energy = e;}
-	void dec_energy(float e) {energy -= e;}
-	void inc_energy(float e) {energy += e;}
+	int get_energy() const {return energy;}
+	void set_energy(int e) {energy = e;}
+	void dec_energy(int e) {energy -= e;}
+	void inc_energy(int e) {energy += e;}
 
 	/*
 	bool operator==(const EnergyNode &other) const {
@@ -20,5 +20,5 @@ public:
 	*/
 	
 protected:
-	float energy;
+	int energy;
 };

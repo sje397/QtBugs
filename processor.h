@@ -3,8 +3,8 @@
 
 #include <QByteArray>
 
-#define INPUTS		(9 + 2) 		// 9 colours and a short for amount of energy (pain?)
-#define OUTPUTS	(1 + 1)				// 1 byte for direction, 1 for colour
+#define INPUTS		(9 + 2)		// 9 colours and a short for amount of energy (pain?)
+#define OUTPUTS     (1 + 1 + 1)		// 1 byte for direction, 1 for colour, 1 for 'split'
 
 // uncommend to allow the RAND instruction
 #define ENABLE_RAND
@@ -34,7 +34,7 @@ public:
 	QString disassemble_from(int address);
 
 	typedef enum {I_NOOP, I_PUSH, I_POP, I_PUSHA, I_POPA, I_SUBROUTINE, I_RET, I_IN, I_OUT, I_JMP, I_JMPZ, I_JMPNZ, I_LOAD, I_STORE, I_INC, I_DEC, I_NOT, I_AND, I_OR, I_NAND, I_NOR, I_XOR, I_ADD, I_SUB, I_MUL, I_DIV, I_RAND, MAX_I} Instruction;
-		
+
 protected:
 	void step();
 

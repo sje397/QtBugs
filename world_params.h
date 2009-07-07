@@ -11,10 +11,10 @@ public:
 
 	int min_data, max_data;
 	quint64 max_age;
-	float child_energy, min_energy, max_energy;
-	float min_e_energy, max_e_energy;
-	float move_energy, stay_energy;
-	float total_energy, min_bug_energy, min_energy_energy;
+	int child_energy, min_energy, max_energy;
+	int min_e_energy, max_e_energy;
+	int move_energy, stay_energy;
+	int total_energy, min_bug_energy, min_energy_energy;
 	int pd_width, pd_height;
 	int steps_per_update, stack_size;
 	float mutation;
