@@ -292,7 +292,7 @@ void PetriDish::balance() {
 	// add new energy
 	//qDebug() << "adding energy";
 	//check_integrity();
-	float min_e, max_e;
+	int min_e, max_e;
 	float a, r;
 	int d;
 	while(energyEnergy < world_params.min_energy_energy && remainingEnergy >= world_params.max_e_energy) {
@@ -339,7 +339,7 @@ void PetriDish::balance() {
 		hash = x * height + y;
 
 		max_e = world_params.max_e_energy - energy[hash];
-		if((min_e = world_params.min_energy - energy[hash]) > 0.0f) {
+		if((min_e = world_params.min_energy - energy[hash]) > 0) {
 			if(max_e > min_e)
 				e = (int)(qrand()/(float)RAND_MAX * (max_e -  min_e)) + min_e;
 			else
