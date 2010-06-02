@@ -1,37 +1,70 @@
 #include "histogramdialog.h"
 #include <QPainter>
+#include <QTimer>
+#include <QDebug>
 
-HistogramDialog::HistogramDialog(QWidget *parent)
-	: QDialog(parent), population(0)
+HistogramDialog::HistogramDialog(const WorldParams &p, QWidget *parent)
+	: QDialog(parent), params(p), population(0)
 {
 	ui.setupUi(this);
+	setAttribute(Qt::WA_DeleteOnClose, true);
+
+	float f;
+	char r, g;
+	for(int i = 0; i < 256; i++) {
+		f = i / 255.0f;
+		//colorTable[i] = QColor(qRgb((int)(0xff * cos(M_PI / 2 * r)), (int)(0xff * cos(M_PI/2 - M_PI /2 * r)), 0));
+		//colorTable[i] = QColor(qRgb((int)(0xff * (1 - f)), (int)(0xff * f), 0));
+		if(f <= 0.5) {
+			r = (char)0xff;
+			g = (char)(0xff * f * 2);
+		} else {
+			r = (char)(0xff * (1 - f) * 2);
+			g = (char)0xff;
+		}
+		colorTable[i] = QColor(qRgb(r, g, 0));
+	}
+
+	QTimer *t = new QTimer(this);
+	t->setInterval(500);
+	connect(t, SIGNAL(timeout()), this, SLOT(update()));
+	t->start();
 }
 
 HistogramDialog::~HistogramDialog()
 {
-
 }
 
-void HistogramDialog::newData(const QMap<int, int> &data, int pop) {
-	histData = data;
+void HistogramDialog::newData(const QVector<QByteArray> &data, int pop) {
+	dnaData = data;
 	population = pop;
-	update();
+	//update();
 }
 
 void HistogramDialog::paintEvent(QPaintEvent *ev) {
 	QPainter painter(this);
-	int i;
-	float w = width() / 256.0f, x = 0, h, max = 0;
+	float wr = (width() - 1) / (float)params.max_data, h = (height() - 1), x = 0;
 
-	painter.setPen(Qt::black);
-	painter.setBrush(Qt::blue);
+	//qDebug() << "w:" << w << "h:" << h;
 
-	int hi = height() - 1, v;
-	for(i = 0; i < 256; i++) {
-		if((v = histData[i]) > 0) {
-			h = hi - v / (float)population * hi;
-			painter.drawRect(x, h, w, hi - h);
+	int i, j, d, c;
+	long S, SS;
+	double mean, var, scaled_v;
+	for(i = 0; i < params.max_data; i++) {
+		S = 0; SS = 0;
+		for(j = 0; j < population; j++) {
+			if(dnaData[j].size() > j)
+				d = dnaData[j][i];
+			else
+				d = 0;
+			S += d; SS += (d * d);
 		}
-		x += w;
+		mean = S / (double)population;
+		var = SS / (double)population - (mean * mean);
+
+		scaled_v = var / 16384.0;
+		c = (int)(scaled_v * 255);
+		painter.fillRect(x, (int)(h * (1 - scaled_v) + 0.5f), (int)(wr + 0.5f), h, colorTable[c]);
+		x += wr;
 	}
 }

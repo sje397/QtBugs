@@ -3,9 +3,10 @@
 #include <QMessageBox>
 #include "settings.h"
 #include "bugeditdialog.h"
-#include "histogramdialog.h"
 
-MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags), petri_dish(), filename(0), changed(true), auto_save(false), update_thread(this, this) {
+MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags), petri_dish(),
+	histogramDialog(0), filename(0), changed(true), auto_save(false), update_thread(this, this)
+{
 	setupUi(this);
 	
 	connect(&timer, SIGNAL(timeout()), &petri_dish, SLOT(step()));
@@ -314,8 +315,19 @@ void MainWindow::on_spinDNAVal_valueChanged(int byte) {
 
 void MainWindow::on_btnHist_clicked() {
 	//stop();
-	HistogramDialog *d = new HistogramDialog(this);
-	connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), d, SLOT(close()));
-	connect(&petri_dish, SIGNAL(histData(const QMap<int, int> &, int)), d, SLOT(newData(const QMap<int, int> &, int)));
-	d->show();
+	btnHist->setEnabled(false);
+	if(!histogramDialog) {
+		histogramDialog = new HistogramDialog(settings->getParams(), this);
+		connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), histogramDialog, SLOT(close()));
+		connect(&petri_dish, SIGNAL(dnaData(const QVector<QByteArray> &, int)), histogramDialog, SLOT(newData(const QVector<QByteArray> &, int)));
+		petri_dish.enable_histogram_calc(true);
+		histogramDialog->show();
+		connect(histogramDialog, SIGNAL(finished(int)), this, SLOT(histogramClosed()));
+	}
+}
+
+void MainWindow::histogramClosed() {
+	histogramDialog = 0;
+	petri_dish.enable_histogram_calc(false);
+	btnHist->setEnabled(true);
 }

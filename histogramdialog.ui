@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>HistogramDialogClass</class>
- <widget class="QDialog" name="HistogramDialogClass" >
-  <property name="geometry" >
+ <widget class="QDialog" name="HistogramDialogClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,11 +10,11 @@
     <height>543</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Histogram</string>
+  <property name="windowTitle">
+   <string>Genetic Variance</string>
   </property>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
 </ui>

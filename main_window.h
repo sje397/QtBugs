@@ -1,5 +1,6 @@
 #include "ui_main_window.h"
 #include "petri_dish.h"
+#include "histogramdialog.h"
 
 #include <QTimer>
 #include <QTime>
@@ -64,6 +65,7 @@ protected:
 	bool write_to_stream(QDataStream &out);
 
 	PetriDish petri_dish;
+	HistogramDialog *histogramDialog;
 	int last_time;
 	QTimer timer;
 	QTime update_time;
@@ -79,5 +81,6 @@ protected:
 
 private slots:
 	void on_btnHist_clicked();
+	void histogramClosed();
 	void on_spinDNAVal_valueChanged(int);
 };

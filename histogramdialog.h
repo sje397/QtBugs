@@ -2,25 +2,30 @@
 #define HISTOGRAMDIALOG_H
 
 #include <QDialog>
-#include <QMap>
+#include <QVector>
+#include <QByteArray>
 #include "ui_histogramdialog.h"
+#include "world_params.h"
 
 class HistogramDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	HistogramDialog(QWidget *parent = 0);
+	HistogramDialog(const WorldParams &params, QWidget *parent = 0);
 	~HistogramDialog();
 
 public slots:
-	void newData(const QMap<int, int> &data, int pop);
+	void newData(const QVector<QByteArray> &data, int pop);
 protected:
 	void paintEvent(QPaintEvent *ev);
 private:
 	Ui::HistogramDialogClass ui;
-	QMap<int, int> histData;
+	QVector<QByteArray> dnaData;
+	double *variance;
+	WorldParams params;
 	int population;
+	QColor colorTable[256];
 };
 
 #endif // HISTOGRAMDIALOG_H

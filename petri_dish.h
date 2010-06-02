@@ -15,6 +15,7 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QVector>
 
 #include "bug.h"
 #include "petriwidget.h"
@@ -51,7 +52,6 @@ public:
 	
 	void set_view_mode(ViewMode vm);
 	void set_show_byte(int byte);
-	QMap<int, int> get_histogram_data();
 	
 	WorldParams get_world_params() {QMutexLocker l(&dataMutex); return world_params;}
 	void set_world_params(const WorldParams &params) {QMutexLocker l(&dataMutex); world_params = params;}
@@ -68,6 +68,7 @@ public slots:
 	void set_age_view_mode();
 	void set_dna_size_view_mode();
 	void set_dna_view_mode();
+	void enable_histogram_calc(bool enable);
 
 	void step();
 
@@ -75,7 +76,7 @@ public slots:
 
 signals:
 	void changed();
-	void histData(const QMap<int, int> &data, int pop);
+	void dnaData(const QVector<QByteArray> &dna_data, int population);
 	
 protected:
 	mutable QMutex dataMutex;
@@ -104,9 +105,11 @@ protected:
 	
 	ViewMode viewMode;
 	int showByte;
-	QMap<int, int> histogram;
+	bool calc_histogram;
 
 	void removeBug(Bug *b, int e, int x, int y);
+
+	QVector<QByteArray> get_dna_data();
 
 public: //only so we can call it from a static function using QtConcurrent::blockingMap
 	void do_eating_and_seeing(int hash);

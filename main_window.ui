@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabStats">
          <attribute name="title">
@@ -615,10 +615,10 @@
                <item>
                 <widget class="QPushButton" name="btnHist">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>Histogram</string>
+                  <string>Variance</string>
                  </property>
                 </widget>
                </item>
@@ -819,28 +819,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>303</x>
-     <y>468</y>
+     <x>491</x>
+     <y>448</y>
     </hint>
     <hint type="destinationlabel">
-     <x>351</x>
-     <y>498</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radViewDNA</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnHist</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>283</x>
-     <y>455</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>326</x>
-     <y>460</y>
+     <x>649</x>
+     <y>493</y>
     </hint>
    </hints>
   </connection>

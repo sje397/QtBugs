@@ -16,7 +16,7 @@ PetriDish::PetriDish(): QObject(),
 energyEnergy(0), bugEnergy(0),
 time(0), max_gen(0), max_age(0), population(0),
 bugList(0), energy(0), bugTotal(0),
-viewMode(VM_DEFAULT), showByte(0)
+viewMode(VM_DEFAULT), showByte(0), calc_histogram(false)
 {
 }
 
@@ -454,7 +454,6 @@ void PetriDish::step() {
 	{
 		QMutexLocker locker(&dataMutex);
 		//dataMutex.lock();
-		histogram.clear();
 
 		max_gen = 0;
 		max_age = 0;
@@ -479,7 +478,7 @@ void PetriDish::step() {
 		// update, move, change energy and remove dead
 		//qDebug() << "update, move, charge energy and remove dead";
 		//check_integrity();
-		int dir, nx, ny, val;
+		int dir, nx, ny;//, val;
 		int e, move_cost;
 
 		//QMutexLocker locker(&dataMutex);
@@ -553,12 +552,14 @@ void PetriDish::step() {
 						update_pixel(x, y);
 
 						bug->update();
+						/*
 						if(bug->get_dna().getData().size() > showByte) {
 							val = (unsigned char)bug->get_dna().getData().at(showByte);
 							//dataMutex.lock();
 							histogram[val] = histogram[val] + 1;
 							//dataMutex.unlock();
 						}
+						*/
 					}
 				}
 			}
@@ -601,11 +602,12 @@ void PetriDish::step() {
 							dad = bugList[hash].at(i2);
 
 							bug = new Bug(mum, dad, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
-
+							/*
 							if(bug->get_dna().getData().size() > showByte) {
 								val = (unsigned char)bug->get_dna().getData().at(showByte);
 								histogram[val] = histogram[val] + 1;
 							}
+							*/
 
 							bug->set_energy(world_params.child_energy);
 							mum->dec_energy(world_params.child_energy);
@@ -664,7 +666,11 @@ void PetriDish::step() {
 		time++;
 	}
 	emit changed();
-	emit histData(histogram, population);
+	//emit histData(histogram, population);
+
+	if(calc_histogram) {
+		emit dnaData(get_dna_data(), population);
+	}
 }
 
 Bug *PetriDish::get_closest_bug(int x, int y) {
@@ -722,21 +728,21 @@ void PetriDish::check_integrity() {
 	if(energyEnergy != totalEE) qDebug() << "energyEnergy:" << energyEnergy << "totalEE:" << totalEE;
 }
 
-QMap<int, int> PetriDish::get_histogram_data() {
-	QMap<int, int> l;
+void PetriDish::enable_histogram_calc(bool enable) {
+	calc_histogram = enable;
+}
 
-	int hash, val;
+QVector<QByteArray> PetriDish::get_dna_data() {
+	QVector<QByteArray> dat;
+
+	int hash;
 	QMutexLocker locker(&dataMutex);
 	QListIterator<int> i(listHash);
 	while(i.hasNext()) {
 		hash = i.next();
 		foreach(Bug *b, bugList[hash]) {
-			if(b->get_dna().getData().size() > showByte) {
-				val = (unsigned char)b->get_dna().getData().at(showByte);
-				l[val] = l[val] + 1;
-			}
+			dat.append(b->get_dna().getData());
 		}
 	}
-
-	return l;
+	return dat;
 }
