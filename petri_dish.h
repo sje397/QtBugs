@@ -73,6 +73,7 @@ public slots:
 	void step();
 
 	void check_integrity();
+	void update_all_pixels();
 
 signals:
 	void changed();
@@ -95,7 +96,6 @@ protected:
 	
 	void update_pixel(int x, int y);
 	void update_pixel(int hash);
-	void update_all_pixels();
 	unsigned char get_bug_color_at(int x, int y);
 	unsigned char get_view_color_at(int x, int y);
 	

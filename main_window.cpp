@@ -66,7 +66,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::updt() {
 	petri_dish.step();
-	//set_stats();
+	//update();
+	set_stats();
 }
 
 void MainWindow::set_stats() {
@@ -105,6 +106,7 @@ bool MainWindow::isRunning() {
 void MainWindow::start_stop() {
 	if(isRunning()) stop();
 	else start();
+	last_mouse = QCursor::pos();
 }
 
 void MainWindow::start() {
@@ -182,7 +184,7 @@ void MainWindow::load_world() {
 
 	bool running = false;
 	if(isRunning()) {
-		start_stop();
+		stop();
 		running = true;
 	}
 	
@@ -216,20 +218,20 @@ void MainWindow::load_world() {
 		filename = fn;
 
 		actionAutoSave->setChecked(auto_save);
-		autosave_world();
+
 		if(ver >= 3) {
-			bool running, detectIdle;
-			in >> running;
+			bool detectIdle;
 			in >> detectIdle;
-			if(detectIdle) idleChk->setChecked(true);
-			if(running) start();
+			in >> running;
+			idleChk->setChecked(detectIdle);
+			enableIdleDetect(detectIdle);
 		}
 	} else {
 		QMessageBox::warning(this, "Load Failed", "Sorry, could not load that file.");
 	}
 
-	if(running) start_stop();
-	else update();
+	if(running) start();
+	else updt();
 }
 
 void MainWindow::save_world() {
