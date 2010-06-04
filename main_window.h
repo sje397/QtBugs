@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QString>
 #include <QThread>
+#include <QPoint>
 
 class MainWindow: public QMainWindow, public Ui::MainWindow {
 	Q_OBJECT
@@ -18,6 +19,7 @@ public:
 public slots:
 	void set_stats();
 	void start_stop();
+	void start();
 	void stop();
 	void check_integrity();
 	void step();	
@@ -29,6 +31,9 @@ public slots:
 	void save_as_world();
 	void autosave_world();
 	void change_world();
+
+	void enableIdleDetect(bool enable);
+	void checkIdle();
 
 	void edit_bug(int x, int y);
 
@@ -67,7 +72,9 @@ protected:
 	PetriDish petri_dish;
 	HistogramDialog *histogramDialog;
 	int last_time;
-	QTimer timer;
+	QTimer timer, idleTimer;
+	QPoint last_mouse;
+	QDateTime idleTime;
 	QTime update_time;
 	float updates_per_sec;
 	

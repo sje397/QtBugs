@@ -45,6 +45,7 @@ Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): Energ
 
 	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0
 	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
+	split = processor.get_out(2);
 }
 
 Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0) {

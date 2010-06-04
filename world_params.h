@@ -3,7 +3,7 @@
 
 #include <QDataStream>
 
-typedef enum {EL_RANDOM, EL_DOT, EL_TWODOTS, EL_RING, EL_RECT, EL_MANYDOTS} EnergyLayout;
+typedef enum {EL_RANDOM, EL_DOT, EL_TWODOTS, EL_RING, EL_RECT, EL_MANYDOTS, EL_CHANGE} EnergyLayout;
 
 class WorldParams {
 public:

@@ -35,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 
 	connect(worldView, SIGNAL(clicked(int, int)), this, SLOT(edit_bug(int, int)));
 
+	connect(idleChk, SIGNAL(clicked(bool)), this, SLOT(enableIdleDetect(bool)));
+
+	connect(&idleTimer, SIGNAL(timeout()), this, SLOT(checkIdle()));
+
 	autosave_timer.setInterval(1000 * 60 * 10); // every ten mins
 	connect(&autosave_timer, SIGNAL(timeout()), this, SLOT(save_world()));
 
@@ -99,16 +103,17 @@ bool MainWindow::isRunning() {
 }
 
 void MainWindow::start_stop() {
-	
-	if(isRunning()) {
-		stop();
-	} else { 
+	if(isRunning()) stop();
+	else start();
+}
+
+void MainWindow::start() {
+	if(!isRunning()) {
 		runButton->setText("Stop");
 		timer.start(0);
 		//update_thread.start();
 		changed = true;
 	}
-	
 }
 
 void MainWindow::stop() {
@@ -191,7 +196,7 @@ void MainWindow::load_world() {
 
 	int ver;
 	in >> ver;
-	if(ver == 2) {
+	if(ver >= 2) {
 		actionAutoSave->setEnabled(true);
 		in >> auto_save;
 
@@ -212,6 +217,13 @@ void MainWindow::load_world() {
 
 		actionAutoSave->setChecked(auto_save);
 		autosave_world();
+		if(ver >= 3) {
+			bool running, detectIdle;
+			in >> running;
+			in >> detectIdle;
+			if(detectIdle) idleChk->setChecked(true);
+			if(running) start();
+		}
 	} else {
 		QMessageBox::warning(this, "Load Failed", "Sorry, could not load that file.");
 	}
@@ -292,10 +304,12 @@ void MainWindow::change_world() {
 }
 
 bool MainWindow::write_to_stream(QDataStream &out) {
-	out << (int)2;
+	out << (int)3;
 	out << auto_save;
 	out << petri_dish.get_world_params();
 	out << petri_dish;
+	out << idleChk->isChecked();
+	out << isRunning();
 	return true;
 }
 
@@ -330,4 +344,22 @@ void MainWindow::histogramClosed() {
 	histogramDialog = 0;
 	petri_dish.enable_histogram_calc(false);
 	btnHist->setEnabled(true);
+}
+
+void MainWindow::enableIdleDetect(bool enable) {
+	if(enable) idleTimer.start(1000);
+	else idleTimer.stop();
+}
+
+void MainWindow::checkIdle() {
+	QPoint pos = QCursor::pos();
+	QDateTime now = QDateTime::currentDateTime();
+	if(pos != last_mouse) {
+		stop();
+		last_mouse = pos;
+		idleTime = now;
+	} else {
+		if(idleTime.secsTo(now) > 10)
+			start();
+	}
 }

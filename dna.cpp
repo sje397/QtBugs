@@ -19,31 +19,24 @@ DNA::DNA(QByteArray &d, float mut): data(&d), mutation(mut) {
 void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	const QByteArray &mumData = mum.getData();
 	const QByteArray &dadData = dad.getData();
-	int coin = qrand() % 2, s;
-	data->resize(s = (coin ? mumData.size() : dadData.size()));
+	const QByteArray *current;
+	//int coin = qrand() % 2, s;
+	data->resize(max_size);
 	//int s;
 	//data->resize(s = qMax(mumData.size(),dadData.size()));
 
 	unsigned int combo = qrand() % 2;
-	for(int i = 0; i < s && i < max_size; i++) {
-		// crosover half-way through dna
-		if(i % (data->size()/2) == 0)
+	current = (combo ? &mumData : &dadData);
+	for(int i = 0; i < current->size(); i++) {
+		// crosover half-way through dna		
+		if(i > 0 && current->at(i) == 0) {// && current->at(i - 1) == 0) { // crossover value - NOOP
 			combo = (combo + 1) % 2;
-		if(i < mumData.size() && i < dadData.size()) {
-			switch(combo) {
-				case 0:
-					(*data)[i] = (dadData[i] & 0x0F) + (mumData[i] & 0xF0); 
-					break;
-				case 1:
-					(*data)[i] = (dadData[i] & 0xF0) + (mumData[i] & 0x0F); 
-					break;
-			}
+			current = (combo ? &mumData : &dadData);
+			if(current->size() <= i) break;
 		}
-		else if(i < mumData.size())
-			(*data)[i] = mumData[i];
-		else //if(i < dadData.size())
-			(*data)[i] = dadData[i];
+		(*data)[i] = (*current)[i];
 	}
+	data->resize(current->size());
 
 	mutate(max_size, min_size);
 }

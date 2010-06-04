@@ -32,7 +32,8 @@ Settings::Settings(QWidget *parent): QWidget(parent) {
 	ui.energyLayoutCmb->addItem("Ring", QVariant(EL_RING));
 	ui.energyLayoutCmb->addItem("Rectangle", QVariant(EL_RECT));
 	ui.energyLayoutCmb->addItem("Many dots", QVariant(EL_MANYDOTS));
-	
+	ui.energyLayoutCmb->addItem("Change (Dot / Two dots)", QVariant(EL_CHANGE));
+
 	connect(ui.buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(apply()));
 	
 //	if(!allowResize) {

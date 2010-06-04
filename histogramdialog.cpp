@@ -47,22 +47,20 @@ void HistogramDialog::paintEvent(QPaintEvent *ev) {
 
 	//qDebug() << "w:" << w << "h:" << h;
 
-	int i, j, d, c;
-	long S, SS;
-	double mean, var, scaled_v;
+	int i, j, d, c, maxi;
+	double scaled_v;
 	for(i = 0; i < params.max_data; i++) {
-		S = 0; SS = 0;
-		for(j = 0; j < population; j++) {
-			if(dnaData[j].size() > j)
-				d = dnaData[j][i];
-			else
-				d = 0;
-			S += d; SS += (d * d);
+		int buckets[256] = {0};
+		maxi = 0;
+		for(j = 0; j < dnaData.size(); j++) {
+			if(dnaData[j].size() > j) {
+				d = (unsigned char)dnaData[j][i];
+				++buckets[d];
+				if(buckets[d] > buckets[maxi]) maxi = d;
+			}
 		}
-		mean = S / (double)population;
-		var = SS / (double)population - (mean * mean);
 
-		scaled_v = var / 16384.0;
+		scaled_v = (population - buckets[maxi]) / (double)population;
 		c = (int)(scaled_v * 255);
 		painter.fillRect(x, (int)(h * (1 - scaled_v) + 0.5f), (int)(wr + 0.5f), h, colorTable[c]);
 		x += wr;

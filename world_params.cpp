@@ -1,12 +1,12 @@
 #include "world_params.h"
 
 WorldParams::WorldParams():
-	min_data(512), max_data(1024),
+	min_data(256), max_data(512),
 	max_age(6000),
 	child_energy(80), min_energy(20), max_energy(400),
 	min_e_energy(10), max_e_energy(40),
 	move_energy(1), stay_energy(1),
-	total_energy(60000), min_bug_energy(10000), min_energy_energy(50000),
+	total_energy(60000), min_bug_energy(10000), min_energy_energy(40000),
 	pd_width(240), pd_height(240),
 	steps_per_update(32), stack_size(64),
 	mutation(0.05f),

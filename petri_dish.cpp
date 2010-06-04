@@ -4,6 +4,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QtConcurrentMap>
+#include <QTime>
 
 #ifndef M_PI
 #define M_PI		3.141592653589793238462643383279502884197169399375105820974944592
@@ -334,6 +335,24 @@ void PetriDish::balance() {
 			case EL_RECT:
 				x = qrand() % width / 2 + width / 4;
 				y = qrand() % height / 4 + height * 3 / 8;
+				break;
+			case EL_CHANGE:
+				if((time / 1000) % 2) {
+					a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+					r = qMin(width/5, height/5) * sqrt(qrand() / (float)RAND_MAX);
+					x = (int)(width / 2 + r * sin(a));
+					y = (int)(height / 2 + r * cos(a));
+				} else {
+					a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+					r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
+					if(qrand() % 2) {
+						x = (int)(width / 4 + r * sin(a));
+						y = (int)(height / 2 + r * cos(a));
+					} else {
+						x = (int)(width * 3 / 4 + r * sin(a));
+						y = (int)(height / 2 + r * cos(a));
+					}
+				}
 				break;
 		}
 		hash = x * height + y;
