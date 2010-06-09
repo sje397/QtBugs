@@ -44,27 +44,29 @@ void HistogramDialog::newData(const QVector<QByteArray> &data, int pop) {
 void HistogramDialog::paintEvent(QPaintEvent *ev) {
 	QPainter painter(this);
 	float wr = (width() - 1) / (float)params.max_data, h = (height() - 1), x = 0;
-        int pop = dnaData.size();
+	int pop = dnaData.size();
 	//qDebug() << "w:" << w << "h:" << h;
 
 	int i, j, d, c, maxi;
+	int buckets[257];
 	double scaled_v;
 	for(i = 0; i < params.max_data; i++) {
-		int buckets[256] = {0};
+		memset(buckets, 0, sizeof(buckets));
 		maxi = 0;
-                for(j = 0; j < pop; j++) {
-                        if(dnaData[j].size() > i) {
-				d = (unsigned char)dnaData[j][i];
-				++buckets[d];
-				if(buckets[d] > buckets[maxi]) maxi = d;
-			}
+		for(j = 0; j < pop; j++) {
+			if(i < dnaData.at(j).size())
+				d = (unsigned char)(dnaData.at(j).at(i));
+			else
+				d = 256;
+			++buckets[d];
+			if(buckets[d] > buckets[maxi]) maxi = d;
 		}
 
-                if(pop > 0 && buckets[maxi] > 0) {
-                    scaled_v = (pop - buckets[maxi]) / (double)pop;
-                    c = (int)(scaled_v * 255);
-                    painter.fillRect(x, (int)(h * (1 - scaled_v) + 0.5f), (int)(wr + 0.5f), h, colorTable[c]);
-                }
+		if(pop > 0) {// && buckets[maxi] > 0) {
+			scaled_v = (pop - buckets[maxi]) / (double)pop;
+			c = (int)(scaled_v * 255);
+			painter.fillRect(x, (int)(h * (1 - scaled_v) + 0.5f), (int)(wr + 0.5f), h, colorTable[c]);
+		}
 		x += wr;
 	}
 }

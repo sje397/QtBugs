@@ -29,6 +29,9 @@ public:
 	QByteArray &get_ram() {return ram;}
 	
 	void set_in(int index, unsigned char val) {in[index % INPUTS] = val;}
+	void set_in_multi(int start_index, int num, unsigned char *vals) {
+		memcpy(in + start_index, vals, num);
+	}
 	unsigned char get_out(int index) {return out[index % OUTPUTS];}
 	
 	QString disassemble_from(int address);

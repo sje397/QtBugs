@@ -7,7 +7,7 @@ class MutationTable {
 public:
 	float add_chunk;
 	float remove_chunk;
-	float swap_chunks;
+	float move_chunk;
 	float reverse_section;
 	float swap_bit;
 	float random_byte;
@@ -38,7 +38,7 @@ protected:
 
 	void add_chunk(int max_size);
 	void remove_chunk(int min_size);
-	void swap_chunks();
+	void move_chunk();
 	void reverse_section();
 };
 

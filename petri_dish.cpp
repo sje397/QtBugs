@@ -39,8 +39,11 @@ void PetriDish::init(WorldParams params) {
 	bugList = new QList<Bug *>[width * height];
 	energy = new int[width * height];
 	bugTotal = new int[width * height];
+	bugCol = new unsigned char [width * height];
+	viewCol = new unsigned char [width * height];
 	for(int i = 0; i < width * height; i++) {
 		energy[i] = bugTotal[i] = 0;
+		bugCol[i] = viewCol[i] = 0;
 	}
 
 	update_all_pixels();
@@ -171,14 +174,20 @@ void PetriDish::update_pixel(int x, int y) {
 	//image.setPixel(x, y, colorTable[get_view_color_at(x, y)].rgb());
 	//painter->setPen(colorTable[get_view_color_at(x, y)]);
 	//painter->drawPoint(x, y);
-	petriWidget->update_pixel(x, y, get_view_color_at(x, y));
+	int hash = x * height + y;
+	bugCol[hash] = find_bug_color_at(hash);
+	viewCol[hash] = find_view_color_at(hash);
+	petriWidget->update_pixel(x, y, viewCol[hash]);
 }
 
 void PetriDish::update_pixel(int hash) {
-	int x = hash % height, y = hash / height;
+	//int x = hash % height, y = hash / height;
+	int x = hash / height, y = hash % height;
 	//painter->setPen(colorTable[get_view_color_at(x, y)]);
 	//painter->drawPoint(x, y);
-	petriWidget->update_pixel(x, y, get_view_color_at(x, y));
+	bugCol[hash] = find_bug_color_at(hash);
+	viewCol[hash] = find_view_color_at(hash);
+	petriWidget->update_pixel(x, y, viewCol[hash]);
 }
 
 void PetriDish::update_all_pixels() {
@@ -190,53 +199,54 @@ void PetriDish::update_all_pixels() {
 	}
 }
 
-unsigned char PetriDish::get_bug_color_at(int x, int y) {
-	int hash = x * height + y;
+unsigned char PetriDish::get_bug_color_at(int hash) {
+	return bugCol[hash];
+}
+
+unsigned char PetriDish::find_bug_color_at(int hash) {
 	if(bugList[hash].size()) {//listHash.contains(hash)) {
 		return bugList[hash].first()->get_color();
 	} else {
 		if(energy[hash]) return EnergyColor;
 		else return BkgColor;
 	}
-
 }
 
-unsigned char PetriDish::get_view_color_at(int x, int y) {
-	int hash;
+unsigned char PetriDish::get_view_color_at(int hash) {
+	return viewCol[hash];
+}
+
+unsigned char PetriDish::find_view_color_at(int hash) {
 	switch(viewMode) {
-				case VM_DEFAULT:
-		return get_bug_color_at(x, y);
-				case VM_BUGS:
+	case VM_DEFAULT:
+		return bugCol[hash];
+	case VM_BUGS:
 		{
-			hash = x * height + y;
 			if(bugList[hash].size()) //listHash.contains(hash))
-				return bugList[hash].first()->get_color();
+				//return bugList[hash].first()->get_color();
+				return bugCol[hash];
 		}
 		break;
-				case VM_ENERGY:
+	case VM_ENERGY:
 		{
-			hash = x * height + y;
 			if(bugList[hash].size()) //listHash.contains(hash))
 				return (int)(253 * (bugList[hash].first()->get_energy() - world_params.min_energy) / (world_params.max_energy - world_params.min_energy)) + 1;
 		}
 		break;
-				case VM_AGE:
+	case VM_AGE:
 		{
-			hash = x * height + y;
 			if(bugList[hash].size()) //listHash.contains(hash))
 				return (int)(253 - 253 * bugList[hash].first()->get_age() / (float)world_params.max_age) + 1;
 		}
 		break;
-				case VM_DNA_SIZE:
+	case VM_DNA_SIZE:
 		{
-			hash = x * height + y;
 			if(bugList[hash].size()) //listHash.contains(hash))
 				return (int)(253 * (bugList[hash].first()->get_dna().size() - world_params.min_data) / (float)(world_params.max_data - world_params.min_data)) + 1;
 		}
 		break;
-				case VM_DNA_VALUE:
+	case VM_DNA_VALUE:
 		{
-			hash = x * height + y;
 			if(bugList[hash].size()) { //listHash.contains(hash))
 				const QByteArray &dna = bugList[hash].first()->get_dna().getData();
 				if(dna.size() > showByte) {
@@ -251,7 +261,8 @@ unsigned char PetriDish::get_view_color_at(int x, int y) {
 
 void PetriDish::get_vision_at(int x, int y, unsigned char vis[9]) {
 	for(int d = 0; d < 9; d++) {
-		vis[d] = get_bug_color_at(WRAP_X(d, x), WRAP_Y(d, y));
+		//vis[d] = get_bug_color_at(WRAP_X(d, x), WRAP_Y(d, y));
+		vis[d] = bugCol[WRAP_X(d, x) * height + WRAP_Y(d, y)];
 	}
 }
 
@@ -298,17 +309,51 @@ void PetriDish::balance() {
 	int d;
 	while(energyEnergy < world_params.min_energy_energy && remainingEnergy >= world_params.max_e_energy) {
 		switch(world_params.energy_layout) {
-			case EL_RANDOM:
-				x = qrand() % width;
-				y = qrand() % height;
-				break;
-			case EL_DOT:
+		case EL_RANDOM:
+			x = qrand() % width;
+			y = qrand() % height;
+			break;
+		case EL_DOT:
+			a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+			r = qMin(width/5, height/5) * sqrt(qrand() / (float)RAND_MAX);
+			x = (int)(width / 2 + r * sin(a));
+			y = (int)(height / 2 + r * cos(a));
+			break;
+			case EL_TWODOTS:
+			a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+			r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
+			if(qrand() % 2) {
+				x = (int)(width / 4 + r * sin(a));
+				y = (int)(height / 2 + r * cos(a));
+			} else {
+				x = (int)(width * 3 / 4 + r * sin(a));
+				y = (int)(height / 2 + r * cos(a));
+			}
+			break;
+			case EL_MANYDOTS:
+			a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+			r = qMin(width/32, height/32) * sqrt(qrand() / (float)RAND_MAX);
+			d = qrand() % 16;
+			x = (int)(width / 5 * ((d / 4) + 1) + r * sin(a));
+			y = (int)(height / 5 * ((d % 4) + 1) + r * cos(a));
+			break;
+			case EL_RING:
+			a = M_PI * 2 * (qrand() / (float)RAND_MAX);
+			r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX) + qMin(width/10, height/10);
+			x = (int)(width / 2 + r * sin(a));
+			y = (int)(height / 2 + r * cos(a));
+			break;
+			case EL_RECT:
+			x = qrand() % width / 2 + width / 4;
+			y = qrand() % height / 4 + height * 3 / 8;
+			break;
+			case EL_CHANGE:
+			if((time / 2000) % 2) {
 				a = M_PI * 2 * (qrand() / (float)RAND_MAX);
 				r = qMin(width/5, height/5) * sqrt(qrand() / (float)RAND_MAX);
 				x = (int)(width / 2 + r * sin(a));
 				y = (int)(height / 2 + r * cos(a));
-				break;
-			case EL_TWODOTS:
+			} else {
 				a = M_PI * 2 * (qrand() / (float)RAND_MAX);
 				r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
 				if(qrand() % 2) {
@@ -318,42 +363,8 @@ void PetriDish::balance() {
 					x = (int)(width * 3 / 4 + r * sin(a));
 					y = (int)(height / 2 + r * cos(a));
 				}
-				break;
-			case EL_MANYDOTS:
-				a = M_PI * 2 * (qrand() / (float)RAND_MAX);
-				r = qMin(width/32, height/32) * sqrt(qrand() / (float)RAND_MAX);
-				d = qrand() % 16;
-				x = (int)(width / 5 * ((d / 4) + 1) + r * sin(a));
-				y = (int)(height / 5 * ((d % 4) + 1) + r * cos(a));
-				break;
-			case EL_RING:
-				a = M_PI * 2 * (qrand() / (float)RAND_MAX);
-				r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX) + qMin(width/10, height/10);
-				x = (int)(width / 2 + r * sin(a));
-				y = (int)(height / 2 + r * cos(a));
-				break;
-			case EL_RECT:
-				x = qrand() % width / 2 + width / 4;
-				y = qrand() % height / 4 + height * 3 / 8;
-				break;
-			case EL_CHANGE:
-				if((time / 1000) % 2) {
-					a = M_PI * 2 * (qrand() / (float)RAND_MAX);
-					r = qMin(width/5, height/5) * sqrt(qrand() / (float)RAND_MAX);
-					x = (int)(width / 2 + r * sin(a));
-					y = (int)(height / 2 + r * cos(a));
-				} else {
-					a = M_PI * 2 * (qrand() / (float)RAND_MAX);
-					r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
-					if(qrand() % 2) {
-						x = (int)(width / 4 + r * sin(a));
-						y = (int)(height / 2 + r * cos(a));
-					} else {
-						x = (int)(width * 3 / 4 + r * sin(a));
-						y = (int)(height / 2 + r * cos(a));
-					}
-				}
-				break;
+			}
+			break;
 		}
 		hash = x * height + y;
 
@@ -381,7 +392,7 @@ void PetriDish::removeBug(Bug *bug, int e, int x, int y) {
 	//dataMutex.unlock();
 
 	bugTotal[x * height + y] -= e;
-	update_pixel(x, y);
+	//update_pixel(x, y);
 	delete bug;
 }
 
@@ -418,33 +429,33 @@ void PetriDish::do_eating_and_seeing(int hash) {
 
 		} else {
 		*/
-			//qDebug() << "div all";
-			//pc = energy[hash] / me;
-			int e;
-			while(i.hasNext()) {
-				bug = i.next();
-				e = bug->get_energy();
-				if(energy[hash] >= world_params.max_energy - e) {
-					bug->inc_energy(world_params.max_energy - e);
-					e2b += world_params.max_energy - e;
-					energy[hash] -= world_params.max_energy - e;
-				} else {
-					bug->inc_energy(energy[hash]);
-					e2b += energy[hash];
-					energy[hash] = 0;
-				}
-				//bug->inc_energy((world_params.max_energy - bug->get_energy()) * pc);
-			}
-			i.toFront();
-
-			if(energy[hash] < world_params.min_e_energy) {
-				eSub += energy[hash];
+		//qDebug() << "div all";
+		//pc = energy[hash] / me;
+		int e;
+		while(i.hasNext()) {
+			bug = i.next();
+			e = bug->get_energy();
+			if(energy[hash] >= world_params.max_energy - e) {
+				bug->inc_energy(world_params.max_energy - e);
+				e2b += world_params.max_energy - e;
+				energy[hash] -= world_params.max_energy - e;
+			} else {
+				bug->inc_energy(energy[hash]);
+				e2b += energy[hash];
 				energy[hash] = 0;
 			}
-			//e2b += energy[hash];
+			//bug->inc_energy((world_params.max_energy - bug->get_energy()) * pc);
+		}
+		i.toFront();
 
-			//bugTotal[hash] += energy[hash];
-			//energy[hash] = 0;
+		if(energy[hash] < world_params.min_e_energy) {
+			eSub += energy[hash];
+			energy[hash] = 0;
+		}
+		//e2b += energy[hash];
+
+		//bugTotal[hash] += energy[hash];
+		//energy[hash] = 0;
 		//}
 	}
 
@@ -566,9 +577,8 @@ void PetriDish::step() {
 							bugList[nhash].append(bug);
 							bugTotal[nhash] += (e - move_cost);
 
-							update_pixel(nx, ny);
+							//update_pixel(nx, ny);
 						}
-						update_pixel(x, y);
 
 						bug->update();
 						/*
@@ -582,12 +592,16 @@ void PetriDish::step() {
 					}
 				}
 			}
+			update_pixel(hash);
 		}
 
 		QSetIterator<int> m(newPos);
 		while(m.hasNext()) {
 			hash = m.next();
-			if(!listHash.contains(hash)) listHash.append(hash);
+			if(!listHash.contains(hash)) {
+				listHash.append(hash);
+				update_pixel(hash);
+			}
 		}
 
 		// have babies
@@ -615,29 +629,26 @@ void PetriDish::step() {
 					if(mum->get_energy() >= world_params.child_energy + world_params.min_energy) {
 						r = qrand() % 255 + 1;
 						if(mum->get_split() < r) {
-						//if(mum->get_split() > 0) {
-							i2 = qrand() % (size - 1);
-							if(i1 == i2) i2 = (i2 + 1) % size;
+							//if(mum->get_split() > 0) {
+							//i2 = qrand() % (size - 1);
+							//if(i1 == i2) i2 = (i2 + 1) % size;
+							i2 = (i1 + 1) % size;
 							dad = bugList[hash].at(i2);
 
-							bug = new Bug(mum, dad, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
-							/*
-							if(bug->get_dna().getData().size() > showByte) {
-								val = (unsigned char)bug->get_dna().getData().at(showByte);
-								histogram[val] = histogram[val] + 1;
+							if(dad->get_split() < r) {
+								bug = new Bug(mum, dad, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
+
+								bug->set_energy(world_params.child_energy);
+								mum->dec_energy(world_params.child_energy);
+
+								bugList[hash].append(bug);
+
+								population++;
+
+								//update_pixel(x, y);
+
+								if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
 							}
-							*/
-
-							bug->set_energy(world_params.child_energy);
-							mum->dec_energy(world_params.child_energy);
-
-							bugList[hash].append(bug);
-
-							population++;
-
-							update_pixel(x, y);
-
-							if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
 						}
 					}
 					i1++;
@@ -684,6 +695,7 @@ void PetriDish::step() {
 
 		time++;
 	}
+
 	emit changed();
 	//emit histData(histogram, population);
 

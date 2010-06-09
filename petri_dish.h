@@ -89,6 +89,7 @@ protected:
 	QList<Bug *> *bugList; // a buglist per location
 	QList<int> listHash; // a list of hashes for locations that have a non-zero pop
 	int *energy;	// an energy value per location
+	unsigned char *bugCol, *viewCol;	// a color per location
 	int *bugTotal; // total bug energy for each location
 	
 	int width, height;
@@ -96,9 +97,11 @@ protected:
 	
 	void update_pixel(int x, int y);
 	void update_pixel(int hash);
-	unsigned char get_bug_color_at(int x, int y);
-	unsigned char get_view_color_at(int x, int y);
-	
+	unsigned char get_bug_color_at(int hash);
+	unsigned char find_bug_color_at(int hash);
+	unsigned char get_view_color_at(int hash);
+	unsigned char find_view_color_at(int hash);
+
 	void get_vision_at(int x, int y, unsigned char vis[9]);
 
 	void balance();

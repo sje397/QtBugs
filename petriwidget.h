@@ -16,15 +16,15 @@ public:
 	void update_pixel(int x, int y, unsigned char col);
 
 public slots:
-        void queueUpdate();
+	void queueUpdate();
 
 signals:
 	void clicked(int x, int y);
 
 protected:
-        QImage image;
-        QTime paintTime;
-        QPainter painter;
+	QImage image;
+	QTime paintTime;
+	QPainter painter;
 
 	void paintEvent(QPaintEvent *event);
 	void mousePressEvent(QMouseEvent * event);

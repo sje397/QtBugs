@@ -49,6 +49,8 @@ Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): Energ
 }
 
 Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0) {
+	data.reserve(max_size);
+
 	mum = mummy;
 	dad = daddy;
 	dna.blend(mum->get_dna(), dad->get_dna(), max_size, min_size);
@@ -68,6 +70,7 @@ Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int step
 }
 
 Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(false), age(0), children(0) {
+	data.reserve(max_size);
 	dna.set_from(parent->get_dna(), max_size, min_size);
 
 	setX(parent->x());
@@ -90,9 +93,10 @@ Bug::~Bug() {
 void Bug::set_vision(unsigned char vision[9]) {
 	// read vision into start of memory
 	//qDebug() << "setting inputs";
-	for(int i = 0; i < 9; i++) {		
-		processor.set_in(i, vision[i]);
-	}
+	//for(int i = 0; i < 9; i++) {
+	//	processor.set_in(i, vision[i]);
+	//}
+	processor.set_in_multi(0, 9, vision);
 
 	updated = false;
 }

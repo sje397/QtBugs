@@ -5,7 +5,7 @@
 #include <cmath>
 
 PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
-        setAttribute(Qt::WA_OpaquePaintEvent, true);
+	setAttribute(Qt::WA_OpaquePaintEvent, true);
 
 	float f;
 	char r, g;
@@ -36,42 +36,50 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 }
 
 void PetriWidget::queueUpdate() {
-    if(paintTime.elapsed() > 100) {
+	if(paintTime.elapsed() > 100) {
         update();
         paintTime.restart();
-    }
+	}
 }
 
 void PetriWidget::set_image_size(int x, int y) {
-        //QMutexLocker locker(&imageMutex);
-        image = QImage(x, y, QImage::Format_RGB32);
+	/*
+	//QMutexLocker locker(&imageMutex);
+	image = QImage(x, y, QImage::Format_RGB32);
 	//image.fill(Qt::black);
-        //if(imagePainter) delete imagePainter;
-        //imagePainter = new QPainter(&image);
+	//if(imagePainter) delete imagePainter;
+	//imagePainter = new QPainter(&image);
+	*/
+	image = QImage(x, y, QImage::Format_Indexed8);
+	for(int i = 0; i < 256; i++)
+		image.setColor(i, colorTable[i].rgb());
 }
 
 void PetriWidget::update_pixel(int x, int y, unsigned char col) {
-        //QMutexLocker locker(&imageMutex);
-        //imagePainter->setPen(colorTable[col]);
-        //imagePainter->drawPoint(x, y);
-        image.setPixel(x, y, colorTable[col].rgb());
+	/*
+	//QMutexLocker locker(&imageMutex);
+	//imagePainter->setPen(colorTable[col]);
+	//imagePainter->drawPoint(x, y);
+	image.setPixel(x, y, colorTable[col].rgb());
+	*/
+	image.setPixel(x, y, col);
 }
-
 
 void PetriWidget::paintEvent(QPaintEvent *event) {
 	if(isVisible()) {
-                //QMutexLocker locker(&imageMutex);
+		//QMutexLocker locker(&imageMutex);
 		QPainter painter(this);	
-                painter.setRenderHint(QPainter::Antialiasing, false);
-                painter.setRenderHint(QPainter::SmoothPixmapTransform,false);
-                painter.drawImage(rect(), image, image.rect(), Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
-                //painter.drawImage(0, 0, image, 0, 0, -1, -1, Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
+		painter.setRenderHint(QPainter::Antialiasing, false);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform,false);
+		//painter.drawImage(rect(), image, image.rect(), Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
+		//painter.drawImage(0, 0, image, 0, 0, -1, -1, Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
+		painter.drawImage(0, 0, image.scaled(width(), height()), 0, 0, -1, -1, Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);
 	}
 }
 
 void PetriWidget::mousePressEvent(QMouseEvent *event) {
 	int x = (int)(event->x() / (float)width() * image.width()),
-		y = (int)(event->y() / (float)height() * image.height());
+	y = (int)(event->y() / (float)height() * image.height());
 
 	emit clicked(x, y);
 }

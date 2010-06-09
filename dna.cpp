@@ -1,14 +1,16 @@
 #include "dna.h"
 #include <cstdlib>
 
+#define CROSSOVER_VAL	0
+
 MutationTable default_mutation_table = {
 	0.11f,	// add chunk
 	0.09f,	// remove chunk
-	0.1f,	// swap chunks
-	0.1f,	// reverse section
+	0.1f,	// move chunk
+	0.1f,	// reverse chunk
 	0.4f,	// swap bit
-        0.18f,	// random byte
-        0.02f,   // add crossover
+	0.19f,	// random byte
+	0.01f,   // add crossover
 };
 
 DNA::DNA(): data(0), mutation(0) {
@@ -22,23 +24,23 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	const QByteArray &dadData = dad.getData();
 	const QByteArray *current;
 	//int coin = qrand() % 2, s;
-        data->resize(qMax(mumData.size(), dadData.size()));
+	data->resize(qMax(mumData.size(), dadData.size()));
 	//int s;
 	//data->resize(s = qMax(mumData.size(),dadData.size()));
-
+	
 	unsigned int combo = qrand() % 2;
 	current = (combo ? &mumData : &dadData);
 	for(int i = 0; i < current->size(); i++) {
-            (*data)[i] = (*current)[i];
-            // crosover
-            if(i > 0 && current->at(i) == 0) {// && current->at(i - 1) == 0) { // crossover value - NOOP
-                combo = (combo + 1) % 2;
-                current = (combo ? &mumData : &dadData);
-                if(current->size() <= i) break;
-            }
+		(*data)[i] = (*current)[i];
+		// crosover
+		if(i > 0 && current->at(i) == CROSSOVER_VAL) {// && current->at(i - 1) == 0) { // crossover value - NOOP
+			combo = (combo + 1) % 2;
+			current = (combo ? &mumData : &dadData);
+			if(current->size() <= i) break;
+		}
 	}
 	data->resize(current->size());
-
+	
 	mutate(max_size, min_size);
 }
 
@@ -62,11 +64,11 @@ void DNA::mutate(int max_size, int min_size) {
 			return;
 		}
 		r -= default_mutation_table.remove_chunk;
-		if(r < default_mutation_table.swap_chunks) {
-			swap_chunks();
+		if(r < default_mutation_table.move_chunk) {
+			move_chunk();
 			return;
 		}
-		r -= default_mutation_table.swap_chunks;
+		r -= default_mutation_table.move_chunk;
 		if(r < default_mutation_table.reverse_section) {
 			reverse_section();
 			return;
@@ -83,58 +85,56 @@ void DNA::mutate(int max_size, int min_size) {
 		if(r < default_mutation_table.random_byte) {
 			int pos = qrand() % data->size();			
 			(*data)[pos] = qrand() % 0xff;
+			return;
 		}
-                r -= default_mutation_table.random_byte;
-                if(r < default_mutation_table.add_crossover) {
-                        int pos = qrand() % data->size();
-                        (*data)[pos] = 0; // crossover value
-                }
-        }
+		r -= default_mutation_table.random_byte;
+		if(r < default_mutation_table.add_crossover) {
+			int pos = qrand() % data->size();
+			(*data)[pos] = CROSSOVER_VAL; // crossover value
+			return;
+		}
+	}
 }
 
 void DNA::add_chunk(int max_size) {
 	if(data->size() >= max_size) return;
-
-	int len = qrand() % qMin(max_size - data->size(), data->size()),
-		pos = qrand() % (data->size() - len);
 	
-	if(len > 0) data->append(data->mid(pos, len));
+	int len = qrand() % qMin(max_size - data->size(), data->size()),
+	pos2 = qrand() % (data->size() - len),
+	pos1 = qrand() % data->size();
+
+	if(len > 0) data->insert(pos1, data->mid(pos2, len));
 }
 
 void DNA::remove_chunk(int min_size) {
-	if(data->size() == min_size) return;
-
-	int len = qrand() % qMin(data->size() - min_size, data->size()),
-		pos = qrand() % (data->size() - len);
+	if(data->size() <= min_size) return;
 	
-	if(len > 0) {
-		QByteArray new_val = data->left(pos);
-		new_val.append(data->mid(pos + len));
-		*data = new_val;
-	}
+	int len = qrand() % qMin(data->size() - min_size, data->size()),
+	pos = qrand() % (data->size() - len);
+	
+	if(len > 0) data->remove(pos, len);
 }
 
-void DNA::swap_chunks() {
-	int len = qrand() % (data->size()/2),
-		pos = qrand() % (data->size()/2 - len);
+void DNA::move_chunk() {
+	int len = qrand() % data->size(),
+	pos1 = qrand() % (data->size() - len),
+	pos2 = qrand() % (data->size() - len);
 	
 	if(len > 0) {
-		QByteArray temp = data->mid(pos, len);
-		for(int i = 0; i < temp.size(); i++) {
-			(*data)[pos + i] = (*data)[pos + data->size()/2 + i];
-			(*data)[pos + data->size()/2 + i] = temp[i];
-		}
+		QByteArray temp = data->mid(pos1, len);
+		data->remove(pos1, len);
+		data->insert(pos2, temp);
 	}
 }
 
 void DNA::reverse_section() {
-	int len = qrand() % data->size(),
-		pos = qrand() % (data->size() - len);
+	int len = qrand() % (data->size()),
+	pos = qrand() % (data->size() - len);
 	
 	if(len > 0) {
 		QByteArray temp = data->mid(pos, len);
 		for(int i = 0; i < temp.size(); i++) {
-			(*data)[pos + i] = temp[temp.size() - 1 - i];
+			(*data)[pos + i] = temp.at(temp.size() - 1 - i);
 		}
 	}
 }
