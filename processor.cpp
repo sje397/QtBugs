@@ -139,7 +139,7 @@ void Processor::step() {
 	}
 }
 
-#define MAX_DISASSEMBLE_LINES 200
+#define MAX_DISASSEMBLE_LINES 2000
 const char *pneumonics[Processor::MAX_I] = {
 	"NOOP", "PUSH", "POP", "PUSHA", "POPA", "CALL", "RET", "IN", "OUT", "JMP", "JMPZ", "JMPNZ", 
 	"LOAD", "STORE", "INC", "DEC", "NOT", "AND", "OR", "NAND", "NOR", "XOR", 
@@ -159,16 +159,25 @@ QString Processor::disassemble_from(int address) {
 
 	int ip_save = ip;
 	ip = address;
-	bool finished = false;
 	int lines = 0;
-	while(ip >= address && lines < MAX_DISASSEMBLE_LINES && !finished) {
-		str += QString("<tr><td>%1:</td>").arg(ip);
+        int v;
+        while(ip >= address && lines < MAX_DISASSEMBLE_LINES && ip < ram.size()) {
+                str += QString("<tr><td>%1: </td>").arg(ip, 4, 16, QLatin1Char('0'));
 
-		str += QString("<td>%1").arg((int)(unsigned char)ram[ip]);
+                v = (int)(unsigned char)ram[ip];
+                if(v == 0)
+                    str += QString("<td><font color='red'>%1</font>").arg(v, 2, 16, QLatin1Char('0'));
+                else
+                    str += QString("<td>%1").arg(v, 2, 16, QLatin1Char('0'));
 		Instruction instruction = (Instruction)((int)(unsigned char)ram[inc_ip()] % MAX_I);
 
-		for(int i = 1; i < inst_bytes[(int)instruction]; i++)
-			str += QString(" %1").arg((int)(unsigned char)ram[(ip + i - 1) % ram.size()]);
+                for(int i = 1; i < inst_bytes[(int)instruction]; i++) {
+                    v = (int)(unsigned char)ram[(ip + i - 1) % ram.size()];
+                    if(v == 0)
+                        str += QString(" <font color='red'>%1</font>").arg(v, 2, 16, QLatin1Char('0'));
+                    else
+                        str += QString(" %1").arg(v, 2, 16, QLatin1Char('0'));
+                }
 		str += "</td>";
 
 		//qDebug() << "inst:" << instruction;

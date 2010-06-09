@@ -11,6 +11,7 @@ public:
 	float reverse_section;
 	float swap_bit;
 	float random_byte;
+        float add_crossover;
 };
 
 class DNA {

@@ -7,7 +7,8 @@ MutationTable default_mutation_table = {
 	0.1f,	// swap chunks
 	0.1f,	// reverse section
 	0.4f,	// swap bit
-	0.2f	// random byte
+        0.18f,	// random byte
+        0.02f,   // add crossover
 };
 
 DNA::DNA(): data(0), mutation(0) {
@@ -21,20 +22,20 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	const QByteArray &dadData = dad.getData();
 	const QByteArray *current;
 	//int coin = qrand() % 2, s;
-	data->resize(max_size);
+        data->resize(qMax(mumData.size(), dadData.size()));
 	//int s;
 	//data->resize(s = qMax(mumData.size(),dadData.size()));
 
 	unsigned int combo = qrand() % 2;
 	current = (combo ? &mumData : &dadData);
 	for(int i = 0; i < current->size(); i++) {
-		// crosover half-way through dna		
-		if(i > 0 && current->at(i) == 0) {// && current->at(i - 1) == 0) { // crossover value - NOOP
-			combo = (combo + 1) % 2;
-			current = (combo ? &mumData : &dadData);
-			if(current->size() <= i) break;
-		}
-		(*data)[i] = (*current)[i];
+            (*data)[i] = (*current)[i];
+            // crosover
+            if(i > 0 && current->at(i) == 0) {// && current->at(i - 1) == 0) { // crossover value - NOOP
+                combo = (combo + 1) % 2;
+                current = (combo ? &mumData : &dadData);
+                if(current->size() <= i) break;
+            }
 	}
 	data->resize(current->size());
 
@@ -83,7 +84,12 @@ void DNA::mutate(int max_size, int min_size) {
 			int pos = qrand() % data->size();			
 			(*data)[pos] = qrand() % 0xff;
 		}
-	}
+                r -= default_mutation_table.random_byte;
+                if(r < default_mutation_table.add_crossover) {
+                        int pos = qrand() % data->size();
+                        (*data)[pos] = 0; // crossover value
+                }
+        }
 }
 
 void DNA::add_chunk(int max_size) {

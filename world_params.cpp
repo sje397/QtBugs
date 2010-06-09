@@ -9,7 +9,7 @@ WorldParams::WorldParams():
 	total_energy(60000), min_bug_energy(10000), min_energy_energy(40000),
 	pd_width(240), pd_height(240),
 	steps_per_update(32), stack_size(64),
-	mutation(0.05f),
+        mutation(0.01f),
 	energy_layout(EL_DOT),
 	kill_on_edge(true)
 {
