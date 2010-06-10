@@ -9,8 +9,8 @@ MutationTable default_mutation_table = {
 	0.1f,	// move chunk
 	0.1f,	// reverse chunk
 	0.4f,	// swap bit
-	0.19f,	// random byte
-	0.01f,   // add crossover
+        0.2f,	// random byte
+        0.00f,   // add crossover
 };
 
 DNA::DNA(): data(0), mutation(0) {
@@ -22,7 +22,7 @@ DNA::DNA(QByteArray &d, float mut): data(&d), mutation(mut) {
 void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	const QByteArray &mumData = mum.getData();
 	const QByteArray &dadData = dad.getData();
-	const QByteArray *current;
+        const QByteArray *current, *other;
 	//int coin = qrand() % 2, s;
 	data->resize(qMax(mumData.size(), dadData.size()));
 	//int s;
@@ -30,13 +30,15 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	
 	unsigned int combo = qrand() % 2;
 	current = (combo ? &mumData : &dadData);
+        other = (combo == 0 ? &mumData : &dadData);
 	for(int i = 0; i < current->size(); i++) {
 		(*data)[i] = (*current)[i];
-		// crosover
-		if(i > 0 && current->at(i) == CROSSOVER_VAL) {// && current->at(i - 1) == 0) { // crossover value - NOOP
+                // crossover - ensure it exists in both parents genes or we end up collecting all the crossovers and having too many
+                if(i > 0 && current->at(i) == CROSSOVER_VAL && i < other->size() && other->at(i) == CROSSOVER_VAL) {
 			combo = (combo + 1) % 2;
 			current = (combo ? &mumData : &dadData);
-			if(current->size() <= i) break;
+                        other = (combo == 0 ? &mumData : &dadData);
+                        if(current->size() <= i) break;
 		}
 	}
 	data->resize(current->size());
