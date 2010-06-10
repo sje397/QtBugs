@@ -164,7 +164,7 @@ QString Processor::disassemble_from(int address) {
 	bool wrap = false;
 	while(ip >= address && lines < MAX_DISASSEMBLE_LINES && !wrap) {
 		wrap = false;
-		str += QString("<tr><td>%1:</td>").arg(ip, 4, 16, QLatin1Char('0'));
+                str += QString("<tr><td>%1:</td>").arg(ip, 4, 10, QLatin1Char('0'));
 
 		Instruction instruction = (Instruction)((int)(unsigned char)ram[ip] % MAX_I);
 		if(ip + inst_bytes[(int)instruction] >= ram.size())
@@ -173,9 +173,9 @@ QString Processor::disassemble_from(int address) {
 		for(int i = 0; i < inst_bytes[(int)instruction]; i++) {
 			v = (int)(unsigned char)ram[(ip + i) % ram.size()];
 			if(v == 0)
-				str += QString("<font color='red'>%1</font> ").arg(v, 2, 16, QLatin1Char('0'));
+                                str += QString("<font color='red'>%1</font> ").arg(v, 3, 10, QLatin1Char('0'));
 			else
-				str += QString("%1 ").arg(v, 2, 16, QLatin1Char('0'));
+                                str += QString("%1 ").arg(v, 3, 10, QLatin1Char('0'));
 		}
 		str += "</td>";
 

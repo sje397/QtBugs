@@ -31,17 +31,20 @@ void DNA::blend(const DNA &mum, const DNA &dad, int max_size, int min_size) {
 	unsigned int combo = qrand() % 2;
 	current = (combo ? &mumData : &dadData);
         other = (combo == 0 ? &mumData : &dadData);
-	for(int i = 0; i < current->size(); i++) {
-		(*data)[i] = (*current)[i];
+        int i = 0;
+        for(; i < current->size(); i++) {
+            if(i < other->size()) {
+                (*data)[i] = (current->at(i) & 0xf)  + (other->at(i) & 0xf0);
                 // crossover - ensure it exists in both parents genes or we end up collecting all the crossovers and having too many
-                if(i > 0 && current->at(i) == CROSSOVER_VAL && i < other->size() && other->at(i) == CROSSOVER_VAL) {
+                if(current->at(i) == CROSSOVER_VAL && other->at(i) == CROSSOVER_VAL) {
 			combo = (combo + 1) % 2;
 			current = (combo ? &mumData : &dadData);
                         other = (combo == 0 ? &mumData : &dadData);
-                        if(current->size() <= i) break;
 		}
+            } else
+                (*data)[i] = current->at(i);
 	}
-	data->resize(current->size());
+        data->resize(i);
 	
 	mutate(max_size, min_size);
 }
