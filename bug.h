@@ -37,8 +37,9 @@ public:
 	unsigned long get_age() const {return age;}
 	unsigned long get_children() const {return children;}
 	unsigned long get_generation() const {return generation;}
-	bool get_updated() const {return updated;}
-	void set_updated() {updated = true;}
+	bool get_marked() const {return marked;}
+	void mark() {marked = true;}
+	void clear_mark() {marked = false;}
 	Bug *get_mum() {return mum;}
 	Bug *get_dad() {return dad;}
 signals:
@@ -54,7 +55,7 @@ protected:
 	
 	unsigned char color;	
 	quint64 age, children, generation;
-	bool updated;
+	bool marked;
 	QPointer<Bug> mum, dad;
 };
 

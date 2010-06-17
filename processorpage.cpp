@@ -18,7 +18,7 @@ void ProcessorPage::setProcessor(Processor *proc) {
 }
 
 void ProcessorPage::updateInfo() {
-	//qDebug() << "updateInfo";
+	qDebug() << "updateInfo" << processor->ip;
 
 	ui.ipEd->setText(QString().setNum(processor->ip));
 	ui.accEd->setText(QString().setNum(processor->acc));

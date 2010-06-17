@@ -396,6 +396,15 @@ void PetriDish::removeBug(Bug *bug, int e, int x, int y) {
 	delete bug;
 }
 
+/*
+unsigned char vis[9];
+void set_vis_and_update(Bug *b) {
+	b->set_vision(vis);
+	b->clear_mark();
+	b->update();
+}
+*/
+
 void PetriDish::do_eating_and_seeing(int hash) {
 	int size = bugList[hash].size();
 	if(size == 0) {
@@ -459,20 +468,30 @@ void PetriDish::do_eating_and_seeing(int hash) {
 		//}
 	}
 
-	//dataMutex.lock();
+	dataMutex.lock();
 	bugEnergy += e2b;
 	energyEnergy -= (e2b + eSub);
+	dataMutex.unlock();
 
 	// we have changed the energy but we still all see the same because only energy hidden under bugs has changed
 	int x = hash / height;
 	int y = hash % height;
+
+
 	unsigned char vis[9];
 	get_vision_at(x, y, vis);
 	//dataMutex.unlock();
+	Bug *b;
 	while(i.hasNext()) {
 		//taskQueue.queueTask(new See(i.next(), vis));
-		i.next()->set_vision(vis);
+		b = i.next();
+		b->set_vision(vis);
+		b->clear_mark();
+		b->update();
 	}
+
+	//get_vision_at(x, y, vis);
+	//QtConcurrent::blockingMap(bugList[hash], set_vis_and_update);
 }
 
 PetriDish *dish;
@@ -480,9 +499,13 @@ void static_eat_see(int hash) {
 	dish->do_eating_and_seeing(hash);
 }
 
+void updateBug(Bug *bug) {
+	bug->update();
+}
+
 void PetriDish::step() {
 	{
-		QMutexLocker locker(&dataMutex);
+		//QMutexLocker locker(&dataMutex);
 		//dataMutex.lock();
 
 		max_gen = 0;
@@ -495,15 +518,16 @@ void PetriDish::step() {
 		unsigned int size;
 		Bug *bug;
 		int hash,x, y;
-
+		/*
 		QListIterator<int> j(listHash);
 		while(j.hasNext()) {
 			hash = j.next();
 			do_eating_and_seeing(hash);
 		}
+		*/
 		// grr segfaults
-		//dish = this;
-		//QtConcurrent::blockingMap(listHash, static_eat_see);
+		dish = this;
+		QtConcurrent::blockingMap(listHash, static_eat_see);
 
 		// update, move, change energy and remove dead
 		//qDebug() << "update, move, charge energy and remove dead";
@@ -525,7 +549,7 @@ void PetriDish::step() {
 			QMutableListIterator<Bug *> i(bugList[hash]);
 			while(i.hasNext()) {
 				bug = i.next();
-				if(!bug->get_updated()) {
+				if(!bug->get_marked()) {
 					e = bug->get_energy();
 					dir = bug->get_dir();
 					if(dir == 4) {
@@ -580,7 +604,7 @@ void PetriDish::step() {
 							//update_pixel(nx, ny);
 						}
 
-						bug->update();
+						bug->mark();
 						/*
 						if(bug->get_dna().getData().size() > showByte) {
 							val = (unsigned char)bug->get_dna().getData().at(showByte);

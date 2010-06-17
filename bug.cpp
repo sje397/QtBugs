@@ -12,7 +12,7 @@ QDataStream& operator<<(QDataStream& stream, Bug &bug) {
 	return stream;
 }
 
-Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor() {
+Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor(), marked(false) {
 	float mutation;
 	
 	in >> age >> children >> generation;
@@ -25,7 +25,7 @@ Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor() {
 	dna.set_mutation(mutation);
 }
 
-Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0), generation(0) {
+Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0), generation(0), marked(false) {
 	data.resize(data_size);
 	for(int i = 0; i < data_size; i++) {
 		data[i] = qrand() % 256;
@@ -48,7 +48,7 @@ Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): Energ
 	split = processor.get_out(2);
 }
 
-Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0) {
+Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), age(0), children(0), marked(false) {
 	data.reserve(max_size);
 
 	mum = mummy;
@@ -69,7 +69,7 @@ Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int step
 	split = processor.get_out(2);
 }
 
-Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(false), age(0), children(0) {
+Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(false), age(0), children(0), marked(false) {
 	data.reserve(max_size);
 	dna.set_from(parent->get_dna(), max_size, min_size);
 
@@ -97,8 +97,6 @@ void Bug::set_vision(unsigned char vision[9]) {
 	//	processor.set_in(i, vision[i]);
 	//}
 	processor.set_in_multi(0, 9, vision);
-
-	updated = false;
 }
 
 void Bug::update() {
@@ -117,6 +115,5 @@ void Bug::update() {
 	split = processor.get_out(2);
 	age++;
 	
-	updated = true;
 	emit changed();
 }
