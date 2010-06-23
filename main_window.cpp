@@ -339,6 +339,7 @@ void MainWindow::on_btnHist_clicked() {
 		petri_dish.enable_histogram_calc(true);
 		histogramDialog->show();
 		connect(histogramDialog, SIGNAL(finished(int)), this, SLOT(histogramClosed()));
+		connect(histogramDialog, SIGNAL(geneSelected(int)), this->spinDNAVal, SLOT(setValue(int)));
 	}
 }
 

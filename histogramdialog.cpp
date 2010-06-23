@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QDebug>
+#include <QMouseEvent>
 
 HistogramDialog::HistogramDialog(const WorldParams &p, QWidget *parent)
 	: QDialog(parent), params(p), population(0)
@@ -69,4 +70,9 @@ void HistogramDialog::paintEvent(QPaintEvent *ev) {
 		}
 		x += wr;
 	}
+}
+
+void HistogramDialog::mouseReleaseEvent(QMouseEvent *ev) {
+	int gene = (int)(ev->pos().x() / (double)width() * params.max_data);
+	emit geneSelected(gene);
 }

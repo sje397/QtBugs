@@ -17,8 +17,13 @@ public:
 
 public slots:
 	void newData(const QVector<QByteArray> &data, int pop);
+signals:
+	void geneSelected(int gene);
+
 protected:
 	void paintEvent(QPaintEvent *ev);
+	void mouseReleaseEvent(QMouseEvent *ev);
+
 private:
 	Ui::HistogramDialogClass ui;
 	QVector<QByteArray> dnaData;
