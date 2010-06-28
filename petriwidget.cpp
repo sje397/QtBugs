@@ -63,6 +63,7 @@ void PetriWidget::update_pixel(int x, int y, unsigned char col) {
 	image.setPixel(x, y, colorTable[col].rgb());
 	*/
 	image.setPixel(x, y, col);
+        //update();
 }
 
 void PetriWidget::paintEvent(QPaintEvent *event) {

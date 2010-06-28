@@ -61,6 +61,8 @@ public:
 
 	void set_widget(PetriWidget *w);
 
+        QVector<QByteArray> get_dna_data();
+
 public slots:
 	void set_default_view_mode();
 	void set_bugs_view_mode();
@@ -74,6 +76,8 @@ public slots:
 
 	void check_integrity();
 	void update_all_pixels();
+
+        void balance();
 
 signals:
 	void changed();
@@ -103,16 +107,12 @@ protected:
 	unsigned char find_view_color_at(int hash);
 
 	void get_vision_at(int x, int y, unsigned char vis[9]);
-
-	void balance();
 	
 	ViewMode viewMode;
 	int showByte;
 	bool calc_histogram;
 
 	void removeBug(Bug *b, int e, int x, int y);
-
-	QVector<QByteArray> get_dna_data();
 
 public: //only so we can call it from a static function using QtConcurrent::blockingMap
 	void do_eating_and_seeing(int hash);

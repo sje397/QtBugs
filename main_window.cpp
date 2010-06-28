@@ -65,7 +65,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updt() {
-	petri_dish.step();
+        petri_dish.update_all_pixels();
 	set_stats();
 	update();
 }
@@ -78,7 +78,7 @@ void MainWindow::set_stats() {
 	float rate = (t - last_time) / (float)update_time.elapsed() * 1000;
 	last_time = t;
 	update_time.restart();
-	updates_per_sec = 4 * updates_per_sec / 5 + rate / 5;
+        updates_per_sec = qMax(0.0f, 4 * updates_per_sec / 5 + rate / 5);
 	QString updates = QString().setNum(updates_per_sec, 'f', 2);
 	updatesPerSec->setText(updates);
 	
@@ -158,7 +158,11 @@ void MainWindow::new_world() {
 
 	petri_dish.cleanup();
 	petri_dish.init(newParams);
-	totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
+        petri_dish.balance();
+        petri_dish.update_all_pixels();
+        if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
+
+        totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
 	spinDNAVal->setMaximum(newParams.max_data);
 	set_stats();
 	changed = false;
@@ -169,9 +173,8 @@ void MainWindow::new_world() {
 		start_stop();
 	} else
 		update();
-	
-	petri_dish.step(); // so we have something to look at!
-	filename = "";
+
+        filename = "";
 }
 
 void MainWindow::load_world() {
@@ -207,10 +210,14 @@ void MainWindow::load_world() {
 		petri_dish.cleanup();
 		settings->setParams(params);
 		petri_dish.init(params);
+
 		totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
 		spinDNAVal->setMaximum(params.max_data);
 		in >> petri_dish;
-		last_time = petri_dish.get_time();
+
+                if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
+
+                last_time = petri_dish.get_time();
 		update_time.restart();
 		changed  = false;
 
@@ -337,6 +344,7 @@ void MainWindow::on_btnHist_clicked() {
 		connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), histogramDialog, SLOT(close()));
 		connect(&petri_dish, SIGNAL(dnaData(const QVector<QByteArray> &, int)), histogramDialog, SLOT(newData(const QVector<QByteArray> &, int)));
 		petri_dish.enable_histogram_calc(true);
+                histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
 		histogramDialog->show();
 		connect(histogramDialog, SIGNAL(finished(int)), this, SLOT(histogramClosed()));
 		connect(histogramDialog, SIGNAL(geneSelected(int)), this->spinDNAVal, SLOT(setValue(int)));
