@@ -225,6 +225,7 @@ void MainWindow::load_world() {
 		filename = fn;
 
 		actionAutoSave->setChecked(auto_save);
+                autosave_world();
 
 		if(ver >= 3) {
 			bool detectIdle;
@@ -298,6 +299,7 @@ void MainWindow::autosave_world() {
 		auto_save = true;
 		autosave_timer.start();
 		save_world();
+                qDebug() << "autosave timer activated";
 	} else {
 		auto_save = false;
 		autosave_timer.stop();
