@@ -336,6 +336,7 @@ void MainWindow::edit_bug(int x, int y) {
 
 void MainWindow::on_spinDNAVal_valueChanged(int byte) {
 	petri_dish.set_show_byte(byte);
+	if(histogramDialog) histogramDialog->geneSelected(byte);
 }
 
 void MainWindow::on_btnHist_clicked() {
@@ -349,7 +350,7 @@ void MainWindow::on_btnHist_clicked() {
                 histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
 		histogramDialog->show();
 		connect(histogramDialog, SIGNAL(finished(int)), this, SLOT(histogramClosed()));
-		connect(histogramDialog, SIGNAL(geneSelected(int)), this->spinDNAVal, SLOT(setValue(int)));
+		connect(histogramDialog, SIGNAL(selectGene(int)), this->spinDNAVal, SLOT(setValue(int)));
 	}
 }
 

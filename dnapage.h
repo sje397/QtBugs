@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "ui_dnapage.h"
-#include "dna.h"
+#include "bug.h"
 
 class DNAPage : public QWidget
 {
@@ -13,14 +13,13 @@ public:
 	DNAPage(QWidget *parent = 0);
 	~DNAPage();
 
-	void setDNA(DNA *d);
-
-protected:
-	void paintEvent(QPaintEvent *event);
+	void setBug(Bug *b);
+public slots:
+	void updateInfo();
 
 private:
 	Ui::DNAPageClass ui;
-	DNA *dna;
+	Bug *bug;
 };
 
 #endif // DNAPAGE_H

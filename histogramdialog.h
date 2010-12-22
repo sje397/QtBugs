@@ -17,8 +17,9 @@ public:
 
 public slots:
 	void newData(const QVector<QByteArray> &data, int pop);
-signals:
 	void geneSelected(int gene);
+signals:
+	void selectGene(int gene);
 
 protected:
 	void paintEvent(QPaintEvent *ev);
@@ -31,6 +32,7 @@ private:
 	WorldParams params;
 	int population;
 	QColor colorTable[256];
+	int selectedGene;
 };
 
 #endif // HISTOGRAMDIALOG_H

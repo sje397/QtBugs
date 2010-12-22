@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>BugEditDialogClass</class>
- <widget class="QDialog" name="BugEditDialogClass" >
-  <property name="geometry" >
+ <widget class="QDialog" name="BugEditDialogClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,50 +10,50 @@
     <height>726</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>BugEditDialog</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="margin">
+    <number>9</number>
+   </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="processorTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="processorTab">
+      <attribute name="title">
        <string>Processor</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="margin">
+        <number>9</number>
+       </property>
        <item>
-        <widget class="ProcessorPage" native="1" name="procPage" />
+        <widget class="ProcessorPage" name="procPage" native="true"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="dnaTab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="dnaTab">
+      <attribute name="title">
        <string>DNA</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="margin">
+        <number>9</number>
+       </property>
        <item>
-        <widget class="DNAPage" native="1" name="dnaPage" />
+        <widget class="DNAPage" name="dnaPage" native="true"/>
        </item>
       </layout>
      </widget>
@@ -60,7 +61,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>DNAPage</class>

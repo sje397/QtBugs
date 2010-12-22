@@ -3,20 +3,24 @@
 
 #include <QWidget>
 #include "ui_dnawidget.h"
+#include "dna.h"
 
-class dnawidget : public QWidget
+class DNAWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	dnawidget(QWidget *parent = 0);
-	~dnawidget();
+	DNAWidget(QWidget *parent = 0);
+	~DNAWidget();
+
+	void setDNA(DNA *d);
 
 protected:
 	void paintEvent(QPaintEvent *event);
 
 private:
 	Ui::dnawidgetClass ui;
+	DNA *dna;
 };
 
 #endif // DNAWIDGET_H

@@ -5,7 +5,7 @@
 #include <QMouseEvent>
 
 HistogramDialog::HistogramDialog(const WorldParams &p, QWidget *parent)
-	: QDialog(parent), params(p), population(0)
+	: QDialog(parent), params(p), population(0), selectedGene(0)
 {
 	ui.setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose, true);
@@ -44,9 +44,12 @@ void HistogramDialog::newData(const QVector<QByteArray> &data, int pop) {
 
 void HistogramDialog::paintEvent(QPaintEvent *ev) {
 	QPainter painter(this);
-	float wr = (width() - 1) / (float)params.max_data, h = (height() - 1), x = 0;
+	float wr = width() / (float)params.max_data, h = (height() - 1), x = 0;
 	int pop = dnaData.size();
 	//qDebug() << "w:" << w << "h:" << h;
+
+	QRectF rectf(wr * selectedGene, 0, wr, h);
+	painter.fillRect(rectf, Qt::blue);
 
 	int i, j, d, c, maxi;
 	int buckets[257];
@@ -66,13 +69,18 @@ void HistogramDialog::paintEvent(QPaintEvent *ev) {
 		if(pop > 0) {// && buckets[maxi] > 0) {
 			scaled_v = (pop - buckets[maxi]) / (double)pop;
 			c = (int)(scaled_v * 255);
-			painter.fillRect(x, (int)(h * (1 - scaled_v) + 0.5f), (int)(wr + 0.5f), h, colorTable[c]);
+			rectf = QRectF(x, h * (1 - scaled_v), wr, h);
+			painter.fillRect(rectf, colorTable[c]);
 		}
 		x += wr;
 	}
 }
 
+void HistogramDialog::geneSelected(int gene) {
+	selectedGene = gene;
+}
+
 void HistogramDialog::mouseReleaseEvent(QMouseEvent *ev) {
-	int gene = (int)(ev->pos().x() / (double)width() * params.max_data);
-	emit geneSelected(gene);
+	int gene = (int)((ev->pos().x() / (double)width()) * params.max_data);
+	emit selectGene(gene);
 }
