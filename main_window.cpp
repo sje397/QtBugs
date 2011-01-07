@@ -5,7 +5,7 @@
 #include "bugeditdialog.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags), petri_dish(),
-	histogramDialog(0), filename(0), changed(true), auto_save(false), update_thread(this, this)
+	histogramDialog(0), changed(true), auto_save(false), update_thread(this, this)
 {
 	setupUi(this);
 	
