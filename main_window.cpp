@@ -5,10 +5,10 @@
 #include "bugeditdialog.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags), petri_dish(),
-	histogramDialog(0), filename(0), changed(true), auto_save(false), update_thread(this, this)
+	histogramDialog(0), changed(true), auto_save(false), update_thread(this, this)
 {
 	setupUi(this);
-	
+
 	connect(&timer, SIGNAL(timeout()), &petri_dish, SLOT(step()));
 	connect(&petri_dish, SIGNAL(changed()), worldView, SLOT(queueUpdate()));
 	//connect(&petri_dish, SIGNAL(changed()), worldView, SLOT(repaint()));
@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	connect(radViewAge, SIGNAL(clicked()), &petri_dish, SLOT(set_age_view_mode()));
 	connect(radViewSize, SIGNAL(clicked()), &petri_dish, SLOT(set_dna_size_view_mode()));
 	connect(radViewDNA, SIGNAL(clicked()), &petri_dish, SLOT(set_dna_view_mode()));
-	
+	connect(radViewTerrain, SIGNAL(clicked()), &petri_dish, SLOT(set_terrain_view_mode()));
+
 	connect(actionNew, SIGNAL(triggered()), this, SLOT(new_world()));
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(save_world()));
 	connect(actionOpen, SIGNAL(triggered()), this, SLOT(load_world()));
@@ -65,7 +66,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updt() {
-        petri_dish.update_all_pixels();
+		petri_dish.update_all_pixels();
 	set_stats();
 	update();
 }
@@ -78,14 +79,14 @@ void MainWindow::set_stats() {
 	float rate = (t - last_time) / (float)update_time.elapsed() * 1000;
 	last_time = t;
 	update_time.restart();
-        updates_per_sec = qMax(0.0f, 4 * updates_per_sec / 5 + rate / 5);
+		updates_per_sec = qMax(0.0f, 4 * updates_per_sec / 5 + rate / 5);
 	QString updates = QString().setNum(updates_per_sec, 'f', 2);
 	updatesPerSec->setText(updates);
-	
+
 	int totalEnergy = petri_dish.get_total_energy();
 	bugEnergy->setText(QString().setNum(petri_dish.get_bug_energy()));
 	energyEnergy->setText(QString().setNum(petri_dish.get_energy_energy()));
-	
+
 	int remaining = totalEnergy - petri_dish.get_bug_energy() - petri_dish.get_energy_energy();
 	if(remaining < 0) remaining = 0;
 	remainingEnergy->setText(QString().setNum(remaining));
@@ -94,7 +95,7 @@ void MainWindow::set_stats() {
 	QString pop = QString().setNum(petri_dish.get_population()),
 		gen = QString().setNum(petri_dish.get_max_gen());
 	population->setText(pop);
-	generation->setText(gen);	
+	generation->setText(gen);
 	setWindowTitle("QtBugs - " + gen + " (" + updates + ")");
 }
 
@@ -128,7 +129,7 @@ void MainWindow::stop() {
 }
 
 void MainWindow::step() {
-	if(isRunning()) 
+	if(isRunning())
 		start_stop();
 	petri_dish.step();
 	changed = true;
@@ -153,28 +154,28 @@ void MainWindow::new_world() {
 		start_stop();
 		was_running = true;
 	}
-	
+
 	WorldParams newParams = settings->getParams();
 
 	petri_dish.cleanup();
 	petri_dish.init(newParams);
-        petri_dish.balance();
-        petri_dish.update_all_pixels();
-        if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
+		petri_dish.balance();
+		petri_dish.update_all_pixels();
+		if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
 
-        totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
+		totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
 	spinDNAVal->setMaximum(newParams.max_data);
 	set_stats();
 	changed = false;
 
 	last_time = 0;
-	update_time.restart();	
+	update_time.restart();
 	if(was_running) {
 		start_stop();
 	} else
 		update();
 
-        filename = "";
+		filename = "";
 }
 
 void MainWindow::load_world() {
@@ -190,13 +191,13 @@ void MainWindow::load_world() {
 		stop();
 		running = true;
 	}
-	
-	QString fn = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Bug data (*.bug)"));		
+
+	QString fn = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Bug data (*.bug)"));
 	if(fn.isEmpty()) return;
-	
+
 	QFile file(fn);
 	file.open(QIODevice::ReadOnly);
-	QDataStream in(&file);   // we will serialize the data into the file	
+	QDataStream in(&file);   // we will serialize the data into the file
 	in.setVersion(QDataStream::Qt_4_2);
 
 	int ver;
@@ -215,16 +216,16 @@ void MainWindow::load_world() {
 		spinDNAVal->setMaximum(params.max_data);
 		in >> petri_dish;
 
-                if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
+				if(histogramDialog) histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
 
-                last_time = petri_dish.get_time();
+				last_time = petri_dish.get_time();
 		update_time.restart();
 		changed  = false;
 
 		//if successfull
 		filename = fn;
 
-		actionAutoSave->setChecked(auto_save);
+        actionAutoSave->setChecked(auto_save);
                 autosave_world();
 
 		if(ver >= 3) {
@@ -248,17 +249,17 @@ void MainWindow::save_world() {
 		start_stop();
 		running = true;
 	}
-	
+
 	QString fn;
 	if(filename.isEmpty()) {
-		fn = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Bug data (*.bug)"));		
+		fn = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Bug data (*.bug)"));
 		if(fn.isEmpty()) return;
 	} else
 		fn = filename;
 
 	QFile file(fn);
 	file.open(QIODevice::WriteOnly);
-	QDataStream out(&file);   // we will serialize the data into the file	
+	QDataStream out(&file);   // we will serialize the data into the file
 	out.setVersion(QDataStream::Qt_4_2);
 
 	if(write_to_stream (out)) {
@@ -276,13 +277,13 @@ void MainWindow::save_as_world() {
 		start_stop();
 		running = true;
 	}
-	
-	QString fn = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Bug data (*.bug)"));		
+
+	QString fn = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Bug data (*.bug)"));
 	if(fn.isEmpty()) return;
-	
+
 	QFile file(fn);
 	file.open(QIODevice::WriteOnly);
-	QDataStream out(&file);   // we will serialize the data into the file	
+	QDataStream out(&file);   // we will serialize the data into the file
 	out.setVersion(QDataStream::Qt_4_2);
 
 	if(write_to_stream(out)) {
@@ -299,7 +300,7 @@ void MainWindow::autosave_world() {
 		auto_save = true;
 		autosave_timer.start();
 		save_world();
-                qDebug() << "autosave timer activated";
+				qDebug() << "autosave timer activated";
 	} else {
 		auto_save = false;
 		autosave_timer.stop();
@@ -311,7 +312,7 @@ void MainWindow::change_world() {
 	WorldParams newParams = settings->getParams();
 	petri_dish.set_world_params(newParams);
 	totalEnergy->setText(QString().setNum(petri_dish.get_total_energy()));
-	spinDNAVal->setMaximum(newParams.max_data);	
+	spinDNAVal->setMaximum(newParams.max_data);
 }
 
 bool MainWindow::write_to_stream(QDataStream &out) {
@@ -346,7 +347,7 @@ void MainWindow::on_btnHist_clicked() {
 		connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), histogramDialog, SLOT(close()));
 		connect(&petri_dish, SIGNAL(dnaData(const QVector<QByteArray> &, int)), histogramDialog, SLOT(newData(const QVector<QByteArray> &, int)));
 		petri_dish.enable_histogram_calc(true);
-                histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
+				histogramDialog->newData(petri_dish.get_dna_data(), petri_dish.get_population());
 		histogramDialog->show();
 		connect(histogramDialog, SIGNAL(finished(int)), this, SLOT(histogramClosed()));
 		connect(histogramDialog, SIGNAL(geneSelected(int)), this->spinDNAVal, SLOT(setValue(int)));

@@ -19,21 +19,22 @@ public:
 	Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size);
 
 	virtual ~Bug();
-	
+
 	void set_vision(unsigned char vision[9]);
 	void update();
-	
+
 	bool collidesWithBug(const Bug *other) const;
-	
+
 	void add_child() {children++;}
-	
+
 	DNA &get_dna() {return dna;}
 	Processor &get_processor() {return processor;}
-	
+
 	unsigned char get_color() const {return color;}
 	int get_dir() const {return dir;}
 	unsigned char get_split() const {return split;}
-	
+	unsigned char get_action() const {return action;}
+
 	unsigned long get_age() const {return age;}
 	unsigned long get_children() const {return children;}
 	unsigned long get_generation() const {return generation;}
@@ -42,6 +43,10 @@ public:
 	void clear_mark() {marked = false;}
 	Bug *get_mum() {return mum;}
 	Bug *get_dad() {return dad;}
+
+	int get_payload() {return payload;}
+	void set_payload(int p) {payload = p;}
+	void set_elevation(int e);
 signals:
 	void dying();
 	void changed();
@@ -52,8 +57,11 @@ protected:
 	Processor processor;
 	unsigned char dir;
 	unsigned char split;
-	
-	unsigned char color;	
+	unsigned char action;
+
+	int payload; // terrain being carried
+
+	unsigned char color;
 	quint64 age, children, generation;
 	bool marked;
 	QPointer<Bug> mum, dad;

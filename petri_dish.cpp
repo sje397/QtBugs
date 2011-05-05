@@ -41,12 +41,14 @@ void PetriDish::init(WorldParams params) {
 
         bugList = new QList<Bug *>[width * height];
         energy = new int[width * height];
+        terrain = new int[width * height];
         bugTotal = new int[width * height];
         bugCol = new unsigned char [width * height];
         viewCol = new unsigned char [width * height];
         for(int i = 0; i < width * height; i++) {
             energy[i] = bugTotal[i] = 0;
             bugCol[i] = viewCol[i] = 0;
+            terrain[i] = 1;
         }
     }
 
@@ -60,6 +62,7 @@ void PetriDish::init(WorldParams params) {
 void PetriDish::cleanup() {
     QMutexLocker l(&dataMutex);
     if(energy) {delete[] energy; energy = 0;}
+    if(terrain) {delete[] terrain; terrain = 0;}
     if(bugTotal) {delete[] bugTotal; bugTotal = 0;}
     if(bugCol) {delete[] bugCol; bugCol = 0;}
     if(viewCol) {delete[] viewCol; viewCol = 0;}
@@ -90,6 +93,7 @@ QDataStream& operator<<(QDataStream& stream, const PetriDish &dish) {
 
     for(int i = 0; i < dish.width * dish.height; i++) {
         stream << dish.energy[i];
+        stream << dish.terrain[i];
         stream << dish.bugList[i].size();
         QListIterator<Bug *> j(dish.bugList[i]);
         while(j.hasNext())
@@ -110,6 +114,7 @@ QDataStream& operator>>(QDataStream& stream, PetriDish &dish) {
     int size;
     for(int i = 0; i < dish.width * dish.height; i++) {
         stream >> dish.energy[i];
+        stream >> dish.terrain[i];
         if(dish.energy[i] > 0) {
             dish.energyEnergy += dish.energy[i];
         }
@@ -179,6 +184,10 @@ void PetriDish::set_dna_size_view_mode() {
 
 void PetriDish::set_dna_view_mode() {
     set_view_mode(VM_DNA_VALUE);
+}
+
+void PetriDish::set_terrain_view_mode() {
+    set_view_mode(VM_TERRAIN);
 }
 
 void PetriDish::update_pixel(int x, int y) {
@@ -267,6 +276,10 @@ unsigned char PetriDish::find_view_color_at(int hash) {
             }
         }
         break;
+    case VM_TERRAIN:
+      if(bugList[hash].size()) return EnergyColor;
+      return terrain[hash] == 1 ? BkgColor : (terrain[hash] + 1) * 32;
+      break;
     }
     return BkgColor;
 }
@@ -331,7 +344,7 @@ void PetriDish::balance() {
             x = (int)(width / 2 + r * sin(a));
             y = (int)(height / 2 + r * cos(a));
             break;
-			case EL_TWODOTS:
+            case EL_TWODOTS:
             a = M_PI * 2 * (qrand() / (float)RAND_MAX);
             r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
             if(qrand() % 2) {
@@ -342,24 +355,24 @@ void PetriDish::balance() {
                 y = (int)(height / 2 + r * cos(a));
             }
             break;
-			case EL_MANYDOTS:
+            case EL_MANYDOTS:
             a = M_PI * 2 * (qrand() / (float)RAND_MAX);
             r = qMin(width/32, height/32) * sqrt(qrand() / (float)RAND_MAX);
             d = qrand() % 16;
             x = (int)(width / 5 * ((d / 4) + 1) + r * sin(a));
             y = (int)(height / 5 * ((d % 4) + 1) + r * cos(a));
             break;
-			case EL_RING:
+            case EL_RING:
             a = M_PI * 2 * (qrand() / (float)RAND_MAX);
             r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX) + qMin(width/10, height/10);
             x = (int)(width / 2 + r * sin(a));
             y = (int)(height / 2 + r * cos(a));
             break;
-			case EL_RECT:
+            case EL_RECT:
             x = qrand() % width / 2 + width / 4;
             y = qrand() % height / 4 + height * 3 / 8;
             break;
-			case EL_CHANGE:
+            case EL_CHANGE:
             if((time / 2000) % 2) {
                 a = M_PI * 2 * (qrand() / (float)RAND_MAX);
                 r = qMin(width/5, height/5) * sqrt(qrand() / (float)RAND_MAX);
@@ -404,6 +417,7 @@ void PetriDish::removeBug(Bug *bug, int e, int x, int y) {
     //dataMutex.unlock();
 
     bugTotal[x * height + y] -= e;
+    terrain[x * height + y] += bug->get_payload();
     //update_pixel(x, y);
     delete bug;
 }
@@ -429,16 +443,16 @@ void PetriDish::do_eating_and_seeing(int hash) {
     QListIterator<Bug *> i(bugList[hash]);
     if(energy[hash] > 0 && (total_bug_e = bugTotal[hash]) < world_params.max_energy * size) {
         /*
-		me = world_params.max_energy * size - total_bug_e;
-		if(energy[hash] > me) {
-			//qDebug() << "div some";
-			while(i.hasNext()) {
-				bug = i.next();
-				bug->set_energy(world_params.max_energy);
-			}
-			i.toFront();
+        me = world_params.max_energy * size - total_bug_e;
+        if(energy[hash] > me) {
+            //qDebug() << "div some";
+            while(i.hasNext()) {
+                bug = i.next();
+                bug->set_energy(world_params.max_energy);
+            }
+            i.toFront();
 
-			e2b += me;
+            e2b += me;
 
 			bugTotal[hash] += me;
 			energy[hash] -= me;
@@ -450,24 +464,42 @@ void PetriDish::do_eating_and_seeing(int hash) {
 
 		} else {
 		*/
-        //qDebug() << "div all";
-        //pc = energy[hash] / me;
-        int e;
-        while(i.hasNext()) {
-            bug = i.next();
-            e = bug->get_energy();
-            if(energy[hash] >= world_params.max_energy - e) {
-                bug->inc_energy(world_params.max_energy - e);
-                e2b += world_params.max_energy - e;
-                energy[hash] -= world_params.max_energy - e;
-            } else {
-                bug->inc_energy(energy[hash]);
-                e2b += energy[hash];
-                energy[hash] = 0;
-            }
-            //bug->inc_energy((world_params.max_energy - bug->get_energy()) * pc);
-        }
-        i.toFront();
+		//qDebug() << "div all";
+		//pc = energy[hash] / me;
+		int e;
+		while(i.hasNext()) {
+			bug = i.next();
+			e = bug->get_energy();
+			if(energy[hash] >= world_params.max_energy - e) {
+				bug->inc_energy(world_params.max_energy - e);
+				e2b += world_params.max_energy - e;
+				energy[hash] -= world_params.max_energy - e;
+			} else {
+				bug->inc_energy(energy[hash]);
+				e2b += energy[hash];
+				energy[hash] = 0;
+			}
+			//bug->inc_energy((world_params.max_energy - bug->get_energy()) * pc);
+			if(bug->get_generation() > 10) {
+			  switch(bug->get_action() % 3) {
+			  case 0: // bug drops terrain
+				if(bug->get_payload() > 0) {
+				  terrain[hash] += bug->get_payload();
+				  bug->set_payload(0);
+				}
+				break;
+			  case 1: // bug collects terrain
+				if(bug->get_payload() == 0 && terrain[hash] > 0) {
+				  terrain[hash] -= 1;
+				  bug->set_payload(1);
+				}
+			  default:
+				// do nothing
+				break;
+			  }
+			}
+		}
+		i.toFront();
 
         if(energy[hash] < world_params.min_e_energy) {
             eSub += energy[hash];
@@ -498,6 +530,7 @@ void PetriDish::do_eating_and_seeing(int hash) {
         //taskQueue.queueTask(new See(i.next(), vis));
         b = i.next();
         b->set_vision(vis);
+        b->set_elevation(terrain[hash]);
         b->clear_mark();
         b->update();
     }
@@ -531,12 +564,12 @@ void PetriDish::step() {
         Bug *bug;
         int hash,x, y;
         /*
-		QListIterator<int> j(listHash);
-		while(j.hasNext()) {
-			hash = j.next();
-			do_eating_and_seeing(hash);
-		}
-		*/
+        QListIterator<int> j(listHash);
+        while(j.hasNext()) {
+            hash = j.next();
+            do_eating_and_seeing(hash);
+        }
+        */
         // grr segfaults
         dish = this;
         QtConcurrent::blockingMap(listHash, static_eat_see);
@@ -568,7 +601,6 @@ void PetriDish::step() {
                         move_cost = world_params.stay_energy;
                         nx = x; ny = y;
                     } else {
-                        move_cost = world_params.move_energy;
                         if(world_params.kill_on_edge) {
                             nx = X(dir, x);
                             ny = Y(dir, y);
@@ -576,6 +608,12 @@ void PetriDish::step() {
                             nx = WRAP_X(dir, x);
                             ny = WRAP_Y(dir, y);
                         }
+                        // can't move here - terrain does not allow
+                        if(nx >= 0 && nx < width && ny >= 0 && ny < height && abs(terrain[nx * height + ny] - terrain[x * height + y]) > 1) {
+                          dir = 4;
+                          nx = x; ny = y; move_cost = world_params.stay_energy;
+                        } else
+                          move_cost = world_params.move_energy;
                     }
 
                     if(bug->get_age() >= world_params.max_age
@@ -618,13 +656,13 @@ void PetriDish::step() {
 
                         bug->mark();
                         /*
-						if(bug->get_dna().getData().size() > showByte) {
-							val = (unsigned char)bug->get_dna().getData().at(showByte);
-							//dataMutex.lock();
-							histogram[val] = histogram[val] + 1;
-							//dataMutex.unlock();
-						}
-						*/
+                        if(bug->get_dna().getData().size() > showByte) {
+                            val = (unsigned char)bug->get_dna().getData().at(showByte);
+                            //dataMutex.lock();
+                            histogram[val] = histogram[val] + 1;
+                            //dataMutex.unlock();
+                        }
+                        */
                     }
                 }
             }
@@ -691,15 +729,15 @@ void PetriDish::step() {
                 }
             }
             /* just create copies - no combination
-			Bug *parent;
-			if(size > 0) {
-				QListIterator<Bug *> i(bugList[hash]);
-				int r;
-				while(i.hasNext()) {
-					parent = i.next();
-					r = qrand() % 255 + 1;
-					if(parent->get_split() > r && parent->get_energy() > world_params.min_energy + world_params.child_energy) {
-						bug = new Bug(parent, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
+            Bug *parent;
+            if(size > 0) {
+                QListIterator<Bug *> i(bugList[hash]);
+                int r;
+                while(i.hasNext()) {
+                    parent = i.next();
+                    r = qrand() % 255 + 1;
+                    if(parent->get_split() > r && parent->get_energy() > world_params.min_energy + world_params.child_energy) {
+                        bug = new Bug(parent, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
 
 						if(bug->get_dna().getData().size() > showByte) {
 							val = (unsigned char)bug->get_dna().getData().at(showByte);
@@ -720,9 +758,9 @@ void PetriDish::step() {
 				}
 			}
 			*/
-        }
+		}
 
-        balance();
+		balance();
 
         //qDebug() << "step end";
         //check_integrity();
