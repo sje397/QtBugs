@@ -704,9 +704,10 @@ void PetriDish::step() {
                         r = qrand() % 255 + 1;
                         if(mum->get_split() < r) {
                             //if(mum->get_split() > 0) {
-                            //i2 = qrand() % (size - 1);
+							i2 = qrand() % (size - 1);
+							if(i2 >= i1) i2++;
                             //if(i1 == i2) i2 = (i2 + 1) % size;
-                            i2 = (i1 + 1) % size;
+							//i2 = (i1 + 1) % size;
                             dad = bugList[hash].at(i2);
 
                             if(dad->get_split() < r) {
