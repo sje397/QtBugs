@@ -3,8 +3,8 @@
 
 #include <QByteArray>
 
-#define INPUTS		(9 + 2 + 1)		// 9 colours and a short for amount of energy (pain?), plus one byte for elevation
-#define OUTPUTS     (1 + 1 + 1 + 1)		// 1 byte for direction, 1 for colour, 1 for 'split', 1 for 'action'
+#define INPUTS		(9 + 9 + 9 + 2)		// 9 colours, 9 altitudes, 9 energies, a short for amount of current bug energy (pain?)
+#define OUTPUTS         (1 + 1 + 1 + 1)		// 1 byte for direction, 1 for colour, 1 for 'split', 1 for 'action'
 
 // uncommend to allow the RAND instruction
 #define ENABLE_RAND

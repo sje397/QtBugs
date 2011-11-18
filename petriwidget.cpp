@@ -9,8 +9,8 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 
 	float f;
 	char r, g;
-	for(int i = 1; i < 255; i++) {
-		f = (i - 1) / 253.0f;
+	for(int i = 1; i < 253; i++) {
+		f = (i - 1) / 252.0f;
 		//colorTable[i] = QColor(qRgb((int)(0xff * cos(M_PI / 2 * r)), (int)(0xff * cos(M_PI/2 - M_PI /2 * r)), 0));
 		//colorTable[i] = QColor(qRgb((int)(0xff * (1 - f)), (int)(0xff * f), 0));
 		if(f <= 0.5) {
@@ -23,7 +23,10 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 		colorTable[i] = QColor(qRgb(r, g, 0));
 	}
 	colorTable[0] = QColor(qRgb(0, 0, 0));
+
 	colorTable[255] = QColor(qRgb(0, 0, 255));
+	colorTable[254] = QColor(qRgb(255, 0, 255));
+	colorTable[253] = QColor(qRgb(0, 255, 255));
 
 	/*
 	QTimer *timer = new QTimer(this);
@@ -36,10 +39,10 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 }
 
 void PetriWidget::queueUpdate() {
-	if(paintTime.elapsed() > 100) {
+    if(paintTime.elapsed() > 200 && isVisible()) {
         update();
         paintTime.restart();
-	}
+    }
 }
 
 void PetriWidget::set_image_size(int x, int y) {
@@ -63,13 +66,13 @@ void PetriWidget::update_pixel(int x, int y, unsigned char col) {
 	image.setPixel(x, y, colorTable[col].rgb());
 	*/
 	image.setPixel(x, y, col);
-        //update();
+		//update();
 }
 
 void PetriWidget::paintEvent(QPaintEvent *event) {
 	if(isVisible()) {
 		//QMutexLocker locker(&imageMutex);
-		QPainter painter(this);	
+		QPainter painter(this);
 		painter.setRenderHint(QPainter::Antialiasing, false);
 		painter.setRenderHint(QPainter::SmoothPixmapTransform,false);
 		//painter.drawImage(rect(), image, image.rect(), Qt::ColorOnly | Qt::OrderedDither | Qt::AvoidDither);

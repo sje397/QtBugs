@@ -20,7 +20,7 @@ public:
 
 	virtual ~Bug();
 
-	void set_vision(unsigned char vision[9]);
+        void set_vision(unsigned char color[9], unsigned char altitude[9], unsigned char energy[9]);
 	void update();
 
 	bool collidesWithBug(const Bug *other) const;
@@ -46,7 +46,6 @@ public:
 
 	int get_payload() {return payload;}
 	void set_payload(int p) {payload = p;}
-	void set_elevation(int e);
 signals:
 	void dying();
 	void changed();

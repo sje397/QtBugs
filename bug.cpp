@@ -27,7 +27,10 @@ Bug::Bug(QDataStream &in): EnergyNode(), dna(), processor(), marked(false) {
 	dna.set_mutation(mutation);
 }
 
-Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), action(0), age(0), children(0), generation(0), marked(false), payload(0) {
+Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size):
+    EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4),
+    split(0), action(0), payload(0), age(0), children(0), generation(0), marked(false)
+{
 	data.resize(data_size);
 	for(int i = 0; i < data_size; i++) {
 		data[i] = qrand() % 256;
@@ -50,7 +53,9 @@ Bug::Bug(int data_size,  float mut, int steps_per_update, int stack_size): Energ
 	split = processor.get_out(2);
 }
 
-Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), action(0), age(0), children(0), marked(false), payload(0) {
+Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int steps_per_update, int stack_size):
+    EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), action(0), payload(0), age(0), children(0), marked(false)
+{
 	data.reserve(max_size);
 
 	mum = mummy;
@@ -72,7 +77,9 @@ Bug::Bug(Bug *mummy, Bug *daddy, float mut, int max_size, int min_size, int step
 	action = processor.get_out(3);
 }
 
-Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size): EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), action(0), age(0), children(0), marked(false), payload(0) {
+Bug::Bug(Bug *parent, float mut, int max_size, int min_size, int steps_per_update, int stack_size):
+    EnergyNode(), dna(data, mut), processor(steps_per_update, stack_size), dir(4), split(0), action(0), payload(0), age(0), children(0), marked(false)
+{
 	data.reserve(max_size);
 	dna.set_from(parent->get_dna(), max_size, min_size);
 
@@ -93,22 +100,20 @@ Bug::~Bug() {
 	emit dying();
 }
 
-void Bug::set_vision(unsigned char vision[9]) {
+void Bug::set_vision(unsigned char vision[9], unsigned char altitude[9], unsigned char energy[9]) {
 	// read vision into start of memory
 	//qDebug() << "setting inputs";
 	//for(int i = 0; i < 9; i++) {
 	//	processor.set_in(i, vision[i]);
 	//}
 	processor.set_in_multi(0, 9, vision);
-}
-
-void Bug::set_elevation(int e) {
-  processor.set_in(9+2, (unsigned char)(e % 256));
+        processor.set_in_multi(9, 9, altitude);
+        processor.set_in_multi(18, 9, energy);
 }
 
 void Bug::update() {
-	processor.set_in(9, (unsigned char)((int)energy / 256));
-	processor.set_in(9 + 1, (unsigned char)((int)energy % 256));
+        processor.set_in(27, (unsigned char)((int)energy / 256));
+        processor.set_in(27 + 1, (unsigned char)((int)energy % 256));
 
 	// do one step of the processor
 	//qDebug() << "processor step";
@@ -118,7 +123,7 @@ void Bug::update() {
 	// read and apply direction
 	dir = (processor.get_out(0) + 4) % 9; // 4 is stay still - default out values are 0
 	// read and apply new colour
-	color = processor.get_out(1) % 254 + 1; // col 255 reserved for energy, col 0 for background
+	color = processor.get_out(1);
 	split = processor.get_out(2);
 	action = processor.get_out(3);
 	age++;

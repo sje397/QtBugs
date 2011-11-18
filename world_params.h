@@ -18,6 +18,7 @@ public:
 	int pd_width, pd_height;
 	int steps_per_update, stack_size;
 	float mutation;
+	int poison;
 	EnergyLayout energy_layout;
 	bool kill_on_edge;
 };

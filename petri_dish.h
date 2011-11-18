@@ -94,6 +94,7 @@ protected:
 	QList<Bug *> *bugList; // a buglist per location
 	QList<int> listHash; // a list of hashes for locations that have a non-zero pop
 	int *energy;	// an energy value per location
+	bool *poison; // locations of poison spots
 	int *terrain;	// a terrain value per location
 	unsigned char *bugCol, *viewCol;	// a color per location
 	int *bugTotal; // total bug energy for each location
@@ -109,6 +110,8 @@ protected:
 	unsigned char find_view_color_at(int hash);
 
 	void get_vision_at(int x, int y, unsigned char vis[9]);
+        void get_terrain_at(int x, int y, unsigned char ter[9]);
+        void get_energy_at(int x, int y, unsigned char en[9]);
 
 	ViewMode viewMode;
 	int showByte;

@@ -96,7 +96,8 @@ void MainWindow::set_stats() {
 		gen = QString().setNum(petri_dish.get_max_gen());
 	population->setText(pop);
 	generation->setText(gen);
-	setWindowTitle("QtBugs - " + gen + " (" + updates + ")");
+	setWindowTitle("QtBugs - " + gen + " (UPS: " + updates + ")");
+	//setWindowTitle("QtBugs - " + pop + " (UPS: " + updates + ")");
 }
 
 bool MainWindow::isRunning() {

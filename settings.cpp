@@ -25,7 +25,8 @@ Settings::Settings(QWidget *parent): QWidget(parent) {
 	ui.stepsEd->setValidator(new QIntValidator(this));
 	ui.stackSizeEd->setValidator(new QIntValidator(this));
 	ui.mutationEd->setValidator(new QDoubleValidator(this));
-	
+	ui.poisonEd->setValidator(new QIntValidator(this));
+
 	ui.energyLayoutCmb->addItem("Random", QVariant(EL_RANDOM));
 	ui.energyLayoutCmb->addItem("Dot", QVariant(EL_DOT));
 	ui.energyLayoutCmb->addItem("Two dots", QVariant(EL_TWODOTS));
@@ -35,7 +36,7 @@ Settings::Settings(QWidget *parent): QWidget(parent) {
 	ui.energyLayoutCmb->addItem("Change (Dot / Two dots)", QVariant(EL_CHANGE));
 
 	connect(ui.buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(apply()));
-	
+
 //	if(!allowResize) {
 		ui.widthEd->setEnabled(false);
 		ui.heightEd->setEnabled(false);
@@ -62,7 +63,8 @@ void Settings::setParams(const WorldParams &params) {
 	ui.stepsEd->setText(QString().setNum(params.steps_per_update));
 	ui.stackSizeEd->setText(QString().setNum(params.stack_size));
 	ui.mutationEd->setText(QString().setNum(params.mutation));
-	
+	ui.poisonEd->setText(QString().setNum(params.poison));
+
 	ui.energyLayoutCmb->setCurrentIndex((int)params.energy_layout);
 
 	ui.chkKillOnEdge->setChecked(params.kill_on_edge);
@@ -94,9 +96,10 @@ void Settings::apply() {
 	if(ok) newParams.stack_size = ui.stackSizeEd->text().toInt(&ok);
 	if(ok) newParams.mutation = ui.mutationEd->text().toFloat(&ok);
 	if(ok) newParams.kill_on_edge = ui.chkKillOnEdge->isChecked();
-	
+	if(ok) newParams.poison = ui.poisonEd->text().toInt(&ok);
+
 	newParams.energy_layout = (EnergyLayout)ui.energyLayoutCmb->currentIndex();
-	
+
 	if(ok) {
 		wp = newParams;
 		emit settingsChanged();
