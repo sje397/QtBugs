@@ -506,8 +506,8 @@ void PetriDish::do_eating_and_seeing(int hash) {
     // modify terrain
     while(i.hasNext()) {
         bug = i.next();
-        if(bug->get_generation() > 10) {
-            switch(bug->get_action() % 32) {
+        //if(bug->get_generation() > 10) {
+            switch(bug->get_action() % 128) {
             case 0: // bug drops terrain
                 if(bug->get_payload() > 0 && abs(terrain[hash]) < MAX_TERRAIN) {
                     terrain[hash] += bug->get_payload();
@@ -519,11 +519,37 @@ void PetriDish::do_eating_and_seeing(int hash) {
                     terrain[hash] -= 1;
                     bug->set_payload(1);
                 }
+                break;
+
+            // the following three cases might help flatten
+
+            case 2: // bug collects terrain if elevation > 1
+                if(bug->get_payload() == 0 && terrain[hash] > 1) {
+                    terrain[hash] -= 1;
+                    bug->set_payload(1);
+                }
+                break;
+            case 3: // bug drops terrain if elevation == 0
+                if(bug->get_payload() > 0 && terrain[hash] == 0) {
+                    terrain[hash] += bug->get_payload();
+                    bug->set_payload(0);
+                }
+                break;
+            case 4: // bug drops terrain if elevation == 0, AND collects terrain if elevation > 1
+                if(bug->get_payload() == 0 && terrain[hash] > 1) {
+                    terrain[hash] -= 1;
+                    bug->set_payload(1);
+                }
+                if(bug->get_payload() > 0 && terrain[hash] == 0) {
+                    terrain[hash] += bug->get_payload();
+                    bug->set_payload(0);
+                }
+                break;
             default:
                 // do nothing
                 break;
             }
-        }
+        //}
     }
     i.toFront();
 
