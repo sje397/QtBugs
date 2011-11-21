@@ -1,17 +1,17 @@
 #include "world_params.h"
 
 WorldParams::WorldParams():
-        min_data(2048), max_data(4096),
+        min_data(4096), max_data(8192),
 	max_age(6000),
         child_energy(160), min_energy(20), max_energy(800),
         min_e_energy(10), max_e_energy(80),
         move_energy(2), stay_energy(1),
         total_energy(120000), min_bug_energy(40000), min_energy_energy(76000),
 	pd_width(240), pd_height(240),
-	steps_per_update(64), stack_size(64),
+        steps_per_update(64), stack_size(64),
 	mutation(0.01f),
-	poison(20),
-        energy_layout(EL_TWODOTS),
+        poison(5),
+        energy_layout(EL_RING),
 	kill_on_edge(true)
 {
 }

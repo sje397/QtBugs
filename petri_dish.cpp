@@ -363,10 +363,10 @@ void get_coords(int &x, int &y, EnergyLayout layout, int width, int height, quin
         r = qMin(width/10, height/10) * sqrt(qrand() / (float)RAND_MAX);
         if(qrand() % 2) {
             x = (int)(width / 4 + r * sin(a));
-            y = (int)(height / 2 + r * cos(a));
+            y = (int)(height / 2 + height / 4 * sin(time / 2000.0) + r * cos(a));
         } else {
             x = (int)(width * 3 / 4 + r * sin(a));
-            y = (int)(height / 2 + r * cos(a));
+            y = (int)(height / 2 - height / 4 * sin(time / 2000.0) + r * cos(a));
         }
         break;
     case EL_MANYDOTS:
@@ -506,7 +506,7 @@ void PetriDish::do_eating_and_seeing(int hash) {
     // modify terrain
     while(i.hasNext()) {
         bug = i.next();
-        //if(bug->get_generation() > 10) {
+        //if(bug->get_generation() > 20) {
             switch(bug->get_action() % 128) {
             case 0: // bug drops terrain
                 if(bug->get_payload() > 0 && abs(terrain[hash]) < MAX_TERRAIN) {
@@ -613,6 +613,56 @@ void updateBug(Bug *bug) {
     bug->update();
 }
 
+void PetriDish::replicate(int hash) {
+    int i1, i2, r;
+    Bug *mum, *dad, *bug;
+
+    int x = hash / height,
+        y = hash % height,
+        size = bugList[hash].size();
+
+    if(size <= 1) return;
+
+    QListIterator<Bug *> i(bugList[hash]);
+    i1 = 0;
+    while(i.hasNext()) {
+        mum = i.next();
+
+        if(mum->get_energy() >= world_params.child_energy + world_params.min_energy) {
+            //r = qrand() % 255 + 1;
+            r = 128;
+            if(mum->get_split() < r) {
+                //if(mum->get_split() > 0) {
+                i2 = qrand() % (size - 1);
+                if(i2 >= i1) i2++;
+                //if(i1 == i2) i2 = (i2 + 1) % size;
+                //i2 = (i1 + 1) % size;
+                dad = bugList[hash].at(i2);
+
+                if(dad->get_split() < r) {
+                    bug = new Bug(mum, dad, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
+
+                    bug->set_energy(world_params.child_energy);
+                    mum->dec_energy(world_params.child_energy);
+
+                    bugList[hash].prepend(bug);
+
+                    population++;
+
+                    //update_pixel(x, y);
+
+                    if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
+                }
+            }
+        }
+        i1++;
+    }
+}
+
+void static_replicate(int hash) {
+    dish->replicate(hash);
+}
+
 void PetriDish::step() {
     {
         //QMutexLocker locker(&dataMutex);
@@ -654,7 +704,7 @@ void PetriDish::step() {
             y = hash % height;
             size = bugList[hash].size();
 
-            if(size == 0) qDebug() << "0!!!(2)";
+            //if(size == 0) qDebug() << "0!!!(2)";
             //qDebug() << size << "bugs here";
             QMutableListIterator<Bug *> i(bugList[hash]);
             while(i.hasNext()) {
@@ -756,49 +806,9 @@ void PetriDish::step() {
         //for(int x = 0; x < width; x++) {
         //for(int y = 0; y < height; y++) {
         //hash =x * height + y;
-        QListIterator<int> l(listHash);
-        while(l.hasNext()) {
-            hash = l.next();
-            x = hash / height;
-            y = hash % height;
-            size = bugList[hash].size();
-            if(size == 0) qDebug() << "0!!!(3)";
-
-            if(size > 1) {
-                QListIterator<Bug *> i(bugList[hash]);
-                i1 = 0;
-                while(i.hasNext()) {
-                    mum = i.next();
-
-                    if(mum->get_energy() >= world_params.child_energy + world_params.min_energy) {
-                        r = qrand() % 255 + 1;
-                        if(mum->get_split() < r) {
-                            //if(mum->get_split() > 0) {
-                            i2 = qrand() % (size - 1);
-                            if(i2 >= i1) i2++;
-                            //if(i1 == i2) i2 = (i2 + 1) % size;
-                            //i2 = (i1 + 1) % size;
-                            dad = bugList[hash].at(i2);
-
-                            if(dad->get_split() < r) {
-                                bug = new Bug(mum, dad, world_params.mutation, world_params.max_data, world_params.min_data, world_params.steps_per_update, world_params.stack_size);
-
-                                bug->set_energy(world_params.child_energy);
-                                mum->dec_energy(world_params.child_energy);
-
-                                bugList[hash].append(bug);
-
-                                population++;
-
-                                //update_pixel(x, y);
-
-                                if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
-                            }
-                        }
-                    }
-                    i1++;
-                }
-            }
+        //QListIterator<int> l(listHash);
+        //while(l.hasNext()) {
+            //hash = l.next();
             /* just create copies - no combination
             Bug *parent;
             if(size > 0) {
@@ -829,7 +839,10 @@ void PetriDish::step() {
     }
    }
    */
-        }
+        //}
+
+        dish = this;
+        QtConcurrent::blockingMap(listHash, static_replicate);
 
         balance();
 

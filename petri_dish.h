@@ -121,6 +121,7 @@ protected:
 
 public: //only so we can call it from a static function using QtConcurrent::blockingMap
 	void do_eating_and_seeing(int hash);
+        void replicate(int hash);
 };
 
 QDataStream& operator<<(QDataStream& stream, const PetriDish &dish);
