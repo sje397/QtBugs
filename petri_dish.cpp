@@ -18,7 +18,7 @@
 PetriDish::PetriDish(): QObject(),
     energyEnergy(0), bugEnergy(0),
     time(0), max_gen(0), max_age(0), population(0),
-    bugList(0), energy(0), bugCol(0), viewCol(0), bugTotal(0),
+    bugList(0), energy(0), poison(0), terrain(0), bugCol(0), viewCol(0), bugTotal(0),
     viewMode(VM_DEFAULT), showByte(0), calc_histogram(false)
 {
 }
