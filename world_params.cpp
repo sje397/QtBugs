@@ -11,7 +11,7 @@ WorldParams::WorldParams():
         steps_per_update(64), stack_size(64),
 	mutation(0.01f),
         poison(5),
-        energy_layout(EL_RING),
+        energy_layout(EL_DOT),
 	kill_on_edge(true)
 {
 }
