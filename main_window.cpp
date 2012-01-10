@@ -4,6 +4,8 @@
 #include "settings.h"
 #include "bugeditdialog.h"
 
+#include <cmath>
+
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, flags), petri_dish(),
 	histogramDialog(0), changed(true), auto_save(false), update_thread(this, this)
 {
@@ -54,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags): QMainWindow(parent, f
 	updates_per_sec = 0;
 
 	//update_thread.start();
+        horizontalSlider->setValue(1000);
 	timer.start(0);
 
 	setAttribute(Qt::WA_QuitOnClose, true);
@@ -378,4 +381,17 @@ void MainWindow::checkIdle() {
 		if(idleTime.secsTo(now) > 10)
 			start();
 	}
+}
+
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
+{
+}
+
+void MainWindow::on_horizontalSlider_valueChanged(int value)
+{
+    timer.stop();
+    int delay = 1000 - log10(value) * 1000 / 3;
+    qDebug() << "Value:" << value << "Delay:" << delay;
+    timer.setInterval(delay);
+    timer.start();
 }

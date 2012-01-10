@@ -647,11 +647,12 @@ void PetriDish::replicate(int hash) {
 
                     bugList[hash].prepend(bug);
 
+                    QMutexLocker locker(&dataMutex);
                     population++;
+                    if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
 
                     //update_pixel(x, y);
 
-                    if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
                 }
             }
         }
@@ -725,7 +726,7 @@ void PetriDish::step() {
                         }
                         // falling cost is like staying still, climbing could cost you your life
                         if(nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            int climb = terrain[nx * height + ny] - terrain[x * height + y];
+                            int climb = terrain[nx * height + ny] - terrain[hash];
                             if(climb < 0) move_cost = world_params.stay_energy;
                             else move_cost = world_params.move_energy * (climb + 1);
                             //  dir = 4;
@@ -750,11 +751,11 @@ void PetriDish::step() {
                     } else {
                         //dataMutex.lock();
                         bugEnergy -= move_cost;
+                        bug->dec_energy(move_cost);
                         if(bug->get_age() > max_age) max_age = bug->get_age();
                         if(bug->get_generation() > max_gen) max_gen = bug->get_generation();
                         //dataMutex.unlock();
 
-                        bug->dec_energy(move_cost);
                         if(dir==4) { // staying still
                             //qDebug() << "** bug stays";
                             bugTotal[hash] -= move_cost;

@@ -90,4 +90,6 @@ private slots:
 	void on_btnHist_clicked();
 	void histogramClosed();
 	void on_spinDNAVal_valueChanged(int);
+        void on_horizontalSlider_sliderMoved(int position);
+        void on_horizontalSlider_valueChanged(int value);
 };
