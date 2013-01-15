@@ -9,6 +9,8 @@ DEPENDPATH += .
 INCLUDEPATH += ../include \
     ./GeneratedFiles
 
+QMAKE_CXXFLAGS_RELEASE += -O3
+
 # Input
 FORMS += main_window.ui \
     settings.ui \

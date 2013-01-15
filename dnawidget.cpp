@@ -24,7 +24,7 @@ inline QColor acol(char v) {
 	return QColor(v2 * 127, v1 * 127, v3 * 127);
 }
 
-void DNAWidget::paintEvent(QPaintEvent *event) {
+void DNAWidget::paintEvent(QPaintEvent */*event*/) {
 	if(!isVisible()) return;
 
 	QPainter painter(this);

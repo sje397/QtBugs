@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <cmath>
 
-PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
+PetriWidget::PetriWidget(QWidget *parent): QWidget(parent), imagePainter(0) {
 	setAttribute(Qt::WA_OpaquePaintEvent, true);
 
 	float f;
@@ -39,9 +39,9 @@ PetriWidget::PetriWidget(QWidget *parent): QWidget(0), imagePainter(0) {
 }
 
 void PetriWidget::queueUpdate() {
-    if(paintTime.elapsed() > 200 && isVisible()) {
+    if(paintTime.elapsed() > 25 && isVisible()) {
         update();
-        paintTime.restart();
+      paintTime.restart();
     }
 }
 
@@ -69,7 +69,7 @@ void PetriWidget::update_pixel(int x, int y, unsigned char col) {
 		//update();
 }
 
-void PetriWidget::paintEvent(QPaintEvent *event) {
+void PetriWidget::paintEvent(QPaintEvent */*event*/) {
 	if(isVisible()) {
 		//QMutexLocker locker(&imageMutex);
 		QPainter painter(this);

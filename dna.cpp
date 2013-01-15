@@ -4,12 +4,12 @@
 #define CROSSOVER_VAL	0
 
 MutationTable default_mutation_table = {
-	0.11f,	// add chunk
-	0.09f,	// remove chunk
+        0.011f,	// add chunk
+        0.009f,	// remove chunk
 	0.1f,	// move chunk
-	0.1f,	// reverse chunk
-	0.4f,	// swap bit
-	0.2f,	// random byte
+        0.01f,	// reverse chunk
+        0.58f,	// swap bit
+        0.29f,	// random byte
 	0.00f,   // add crossover
 };
 

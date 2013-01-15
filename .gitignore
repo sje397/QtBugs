@@ -1,0 +1,10 @@
+*.o
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Makefile
+Makefile.*
+debug/*
+release/*
+*.user
+*.user.*

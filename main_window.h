@@ -27,7 +27,7 @@ public slots:
 	
 	void new_world();
 	void load_world();
-	void save_world();
+        void save_world();
 	void save_as_world();
 	void autosave_world();
 	void change_world();
@@ -90,6 +90,8 @@ private slots:
 	void on_btnHist_clicked();
 	void histogramClosed();
 	void on_spinDNAVal_valueChanged(int);
-        void on_horizontalSlider_sliderMoved(int position);
         void on_horizontalSlider_valueChanged(int value);
+private:
+        void load_from_file(const QString &fn, bool &running);
+
 };

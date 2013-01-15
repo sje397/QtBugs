@@ -617,8 +617,8 @@ void PetriDish::replicate(int hash) {
     int i1, i2, r;
     Bug *mum, *dad, *bug;
 
-    int x = hash / height,
-        y = hash % height,
+    int //x = hash / height,
+        //y = hash % height,
         size = bugList[hash].size();
 
     if(size <= 1) return;
@@ -802,8 +802,8 @@ void PetriDish::step() {
         // have babies
         //qDebug() << "have babies";
         //check_integrity();
-        int i1, i2, r;
-        Bug *mum, *dad;
+        //int i1, i2, r;
+        //Bug *mum, *dad;
         //for(int x = 0; x < width; x++) {
         //for(int y = 0; y < height; y++) {
         //hash =x * height + y;

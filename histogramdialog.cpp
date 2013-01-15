@@ -42,7 +42,7 @@ void HistogramDialog::newData(const QVector<QByteArray> &data, int pop) {
 	//update();
 }
 
-void HistogramDialog::paintEvent(QPaintEvent *ev) {
+void HistogramDialog::paintEvent(QPaintEvent */*event*/) {
 	QPainter painter(this);
 	float wr = width() / (float)params.max_data, h = (height() - 1), x = 0;
 	int pop = dnaData.size();
